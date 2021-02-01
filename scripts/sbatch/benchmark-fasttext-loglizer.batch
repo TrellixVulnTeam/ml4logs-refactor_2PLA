@@ -1,0 +1,22 @@
+#!/bin/bash
+#SBATCH --partition=cpu
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --job-name benchmark-fasttext-loglizer
+#SBATCH --output .benchmark-fasttext-loglizer-%j.out
+
+PROJECT_DIR="${HOME}/ml4logs"
+
+source "${HOME}/.venvs/py38/bin/activate"
+
+FILES="${PROJECT_DIR}/data/processed"/*-min.npz
+REPORT_DIR="${PROJECT_DIR}/reports/results"
+
+for f in $FILES; do
+    echo ""
+    echo "Process ${f}"
+    echo ""
+    python -u benchmark_fasttext_loglizer.py "$f" "${REPORT_DIR}"
+done

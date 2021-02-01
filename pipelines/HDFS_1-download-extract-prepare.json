@@ -1,0 +1,29 @@
+{
+    "pipeline": [
+        {
+            "action": "download",
+            "url": "https://zenodo.org/record/3227177/files/HDFS_1.tar.gz",
+            "path": "data/raw/HDFS_1.tar.gz",
+            "mkdir": true,
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "extract_tar",
+            "tar_path": "data/raw/HDFS_1.tar.gz",
+            "out_dir": "data/raw/HDFS_1",
+            "mkdir": true,
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "prepare",
+            "dataset": "HDFS_1",
+            "in_dir": "data/raw/HDFS_1",
+            "out_dir": "data/interim/HDFS_1",
+            "mkdir": true,
+            "force": false,
+            "skip": false
+        }
+    ]
+}

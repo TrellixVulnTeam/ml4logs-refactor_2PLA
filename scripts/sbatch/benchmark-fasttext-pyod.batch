@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:1
+#SBATCH --nodes 1
+#SBATCH --ntasks-per-node 1
+#SBATCH --cpus-per-task 1
+#SBATCH --mem-per-cpu 32G
+#SBATCH --job-name benchmark-fasttext-pyod
+#SBATCH --output .benchmark-fasttext-pyod-%j.out
+
+PROJECT_DIR="${HOME}/ml4logs"
+
+module load cuDNN/7.6.4.38-gcccuda-2019b
+source "${HOME}/.venvs/py38/bin/activate"
+
+FILES="${PROJECT_DIR}/data/processed"/hdfs_[12]-*.npz
+REPORT_DIR="${PROJECT_DIR}/reports/results"
+
+for f in $FILES; do
+    echo ""
+    echo "Process ${f}"
+    echo ""
+    python -u benchmark_fasttext_pyod.py "${f}" "${REPORT_DIR}"
+    echo ""
+done

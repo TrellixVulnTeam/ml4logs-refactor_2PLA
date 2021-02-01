@@ -1,0 +1,41 @@
+{
+    "pipeline": [
+        {
+            "action": "train_fasttext",
+            "in_dir": "data/interim/HDFS_1",
+            "model_path": "models/embeddings/fasttext-skipgram-hdfs_1.bin",
+            "mkdir": true,
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "preprocess_fasttext",
+            "model_path": "models/embeddings/fasttext_skipgram-hdfs_1.bin",
+            "out_path": "data/interim/HDFS_1/skipgram.npx",
+            "mkdir": true,
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "aggregate",
+            "dataset": "HDFS_1",
+            "in_path": "data/interim/HDFS_1/skipgram.npx",
+            "out_path": "data/interim/HDFS_1/skipgram-max.npx",
+            "method": "max",
+            "mkdir": true,
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "split_scale",
+            "in_path": "data/interim/HDFS_1/aggregated.npx",
+            "train_path": "data/processed/HDFS_1/skipgram-max-train.npx",
+            "test_path": "data/processed/HDFS_1/skipgram-max-test.npx",
+            "train_size": 0.2,
+            "scale_test": false,
+            "mkdir": true,
+            "force": false,
+            "skip": false
+        }
+    ]
+}

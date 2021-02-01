@@ -1,0 +1,42 @@
+{
+    "pipeline": [
+        {
+            "action": "train_test_model",
+            "train_path": "data/processed/HDFS_1/fasttext-average-train-scaled.npz",
+            "test_path": "data/processed/HDFS_1/fasttext-average-test-scaled.npz",
+            "stats_dir": "reports/results/HDFS_1-skipgram-average-LR",
+            "model": "logistic_regression",
+            "model_args": {
+                "C": 100,
+                "tol": 1e-2,
+                "max_iter": 1000
+            },
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "train_test_model",
+            "train_path": "data/processed/HDFS_1/fasttext-average-train-scaled.npz",
+            "test_path": "data/processed/HDFS_1/fasttext-average-test-scaled.npz",
+            "stats_dir": "reports/results/HDFS_1-skipgram-average-tree",
+            "model": "decision_tree",
+            "model_args": {},
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "train_test_model",
+            "train_path": "data/processed/HDFS_1/fasttext-average-train-scaled.npz",
+            "test_path": "data/processed/HDFS_1/fasttext-average-test-scaled.npz",
+            "stats_dir": "reports/results/HDFS_1-skipgram-average-svc",
+            "model": "linear_svc",
+            "model_args": {
+                "penalty": "l1",
+                "tol": 0.1,
+                "dual": false
+            },
+            "force": false,
+            "skip": false
+        }
+    ]
+}

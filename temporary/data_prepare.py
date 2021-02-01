@@ -1,30 +1,4 @@
-# ===== IMPORTS =====
-# === Standard library ===
-import logging
-import shutil
-import io
-
-# === Local ===
-import ml4logs
-
-
-# ===== GLOBALS =====
-logger = logging.getLogger(__name__)
-LOG_N_LINES = 500 * 10**3
-
-
-# ===== FUNCTIONS =====
-def prepare_hdfs_1(name: str):
-    xdir = ml4logs.DATASETS[name]['xdir']
-    labels_path = xdir / 'anomaly_label.csv'
-    n_labels_path = ml4logs.DATASETS[name]['labels_path']
-    logger.info('Renamed %s with %s', labels_path, n_labels_path)
-    logs_path = xdir / 'HDFS.log'
-    n_logs_path = ml4logs.DATASETS[name]['logs_path']
-    logger.info('Renamed %s with %s', logs_path, n_logs_path)
-
-
-def prepare_hdfs_2(name: str):
+def prepare_hdfs_2(args):
     xdir = ml4logs.DATASETS[name]['xdir']
     log_files = sorted(list(xdir.glob('*.log')))
     logs_path = ml4logs.DATASETS[name]['logs_path']
@@ -42,7 +16,10 @@ def prepare_hdfs_2(name: str):
     logger.info('Removed all input files')
 
 
-def prepare_bgl(name: str):
+LOG_N_LINES = 500 * 10**3
+
+
+def prepare_bgl(args):
     xdir = ml4logs.DATASETS[name]['xdir']
     in_path = xdir / 'BGL.log'
     labels = []

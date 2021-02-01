@@ -1,0 +1,57 @@
+{
+    "pipeline": [
+        {
+            "action": "train_fasttext",
+            "logs_path": "data/interim/HDFS_1/logs100k.txt",
+            "model_path": "models/embeddings/fasttext_skipgram-hdfs_1.bin",
+            "model_args": {
+                "dim": 100,
+                "minCount": 10000,
+                "minn": 1,
+                "maxn": 1,
+                "thread": 1,
+                "verbose": 2
+            },
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "preprocess_fasttext",
+            "logs_path": "data/interim/HDFS_1/logs100k.txt",
+            "model_path": "models/embeddings/fasttext_skipgram-hdfs_1.bin",
+            "embeddings_path": "data/interim/HDFS_1/fasttext.npy",
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "aggregate",
+            "dataset": "HDFS_1",
+            "logs_path": "data/interim/HDFS_1/logs100k.txt",
+            "labels_path": "data/interim/HDFS_1/labels.csv",
+            "embeddings_path": "data/interim/HDFS_1/fasttext.npy",
+            "out_path": "data/interim/HDFS_1/fasttext-average.npz",
+            "method": "average",
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "split",
+            "in_path": "data/interim/HDFS_1/fasttext-average.npz",
+            "train_path": "data/interim/HDFS_1/fasttext-average-train.npz",
+            "test_path": "data/interim/HDFS_1/fasttext-average-test.npz",
+            "train_size": 0.2,
+            "seed": 14235,
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "scale",
+            "train_path": "data/interim/HDFS_1/fasttext-average-train.npz",
+            "test_path": "data/interim/HDFS_1/fasttext-average-test.npz",
+            "train_scaled_path": "data/processed/HDFS_1/fasttext-average-train-scaled.npz",
+            "test_scaled_path": "data/processed/HDFS_1/fasttext-average-test-scaled.npz",
+            "force": false,
+            "skip": false
+        }
+    ]
+}

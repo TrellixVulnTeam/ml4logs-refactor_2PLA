@@ -1,4 +1,7 @@
 .vscode/
-_archive/
 __pycache__/
 .ipynb_checkpoints/
+*.egg-info/
+
+data/
+models/

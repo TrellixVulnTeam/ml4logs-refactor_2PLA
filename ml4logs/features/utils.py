@@ -1,0 +1,85 @@
+# ===== IMPORTS =====
+# === Standard library ===
+import logging
+import pathlib
+
+# === Thirdparty ===
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+
+# ===== GLOBALS =====
+logger = logging.getLogger(__name__)
+
+
+# ===== FUNCTIONS =====
+def split(args):
+    in_path = pathlib.Path(args['in_path'])
+    train_path = pathlib.Path(args['train_path'])
+    test_path = pathlib.Path(args['test_path'])
+
+    if not args['force'] and train_path.exists() and test_path.exists():
+        logger.info(
+            'Files \'%s\' and \'%s\' already exists and \'force\' is false',
+            train_path, test_path
+        )
+        return
+    if not in_path.exists():
+        logger.error('File \'%s\' does not exist', in_path)
+        return
+    train_path.parent.mkdir(parents=True, exist_ok=True)
+    test_path.parent.mkdir(parents=True, exist_ok=True)
+
+    logger.info('Load dataset from \'%s\'', in_path)
+    npzfile = np.load(in_path)
+    logger.info('Split with \'train size\' = %.2f and \'random seed\' = %d',
+                args['train_size'], args['seed']
+                )
+    x_train, x_test, y_train, y_test = train_test_split(
+        npzfile['X'], npzfile['Y'],
+        train_size=args['train_size'], stratify=npzfile['Y'],
+        random_state=args['seed']
+    )
+
+    logger.info('Save train dataset into \'%s\'', train_path)
+    np.savez(train_path, X=x_train, Y=y_train)
+    logger.info('Save test dataset into \'%s\'', test_path)
+    np.savez(test_path, X=x_test, Y=y_test)
+
+
+def scale(args):
+    train_path = pathlib.Path(args['train_path'])
+    test_path = pathlib.Path(args['test_path'])
+    train_scaled_path = pathlib.Path(args['train_scaled_path'])
+    test_scaled_path = pathlib.Path(args['test_scaled_path'])
+
+    if not args['force'] and train_scaled_path.exists() \
+            and test_scaled_path.exists():
+        logger.info(
+            'Files \'%s\' and \'%s\' already exists and \'force\' is false',
+            train_scaled_path, test_scaled_path
+        )
+        return
+    FILES_TO_CHECK = [train_path, test_path]
+    for file_path in FILES_TO_CHECK:
+        if not file_path.exists():
+            logger.error('File \'%s\' does not exist', file_path)
+            return
+    train_scaled_path.parent.mkdir(parents=True, exist_ok=True)
+    test_scaled_path.parent.mkdir(parents=True, exist_ok=True)
+
+    scaler = StandardScaler()
+    logger.info('Load train dataset from \'%s\'', train_path)
+    npzfile_train = np.load(train_path)
+    logger.info('Scale train dataset using sklearn StandardScaler')
+    x_train_scaled = scaler.fit_transform(npzfile_train['X'])
+    logger.info('Load test dataset from \'%s\'', test_path)
+    npzfile_test = np.load(test_path)
+    logger.info('Scale test dataset using fitted sklearn StandardScaler')
+    x_test_scaled = scaler.transform(npzfile_test['X'])
+
+    logger.info('Save train scaled dataset into \'%s\'', train_scaled_path)
+    np.savez(train_scaled_path, X=x_train_scaled, Y=npzfile_train['Y'])
+    logger.info('Save test scaled dataset into \'%s\'', test_scaled_path)
+    np.savez(test_scaled_path, X=x_test_scaled, Y=npzfile_test['Y'])

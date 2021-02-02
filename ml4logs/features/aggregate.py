@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 # ===== FUNCTIONS =====
 def aggregate(args):
     HANDLERS = {
-        'HDFS_1': aggregate_hdfs
+        'HDFS1': aggregate_hdfs
     }
 
     if args['dataset'] not in HANDLERS:

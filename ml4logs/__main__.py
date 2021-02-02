@@ -21,6 +21,7 @@ def main():
         'download': ml4logs.data.download,
         'extract': ml4logs.data.extract,
         'prepare': ml4logs.data.prepare,
+        'head': ml4logs.data.head,
         'train_fasttext': ml4logs.features.fasttext.train_fasttext,
         'preprocess_fasttext': ml4logs.features.fasttext.preprocess_fasttext,
         'aggregate': ml4logs.features.aggregate.aggregate,

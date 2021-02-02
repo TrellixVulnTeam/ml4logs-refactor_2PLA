@@ -2,9 +2,9 @@
     "pipeline": [
         {
             "action": "train_test_model",
-            "train_path": "data/processed/HDFS_1/fasttext-average-train-scaled.npz",
-            "test_path": "data/processed/HDFS_1/fasttext-average-test-scaled.npz",
-            "stats_dir": "reports/results/HDFS_1-skipgram-average-LR",
+            "train_path": "data/processed/HDFS1/fasttext-average-100k-train-scaled.npz",
+            "test_path": "data/processed/HDFS1/fasttext-average-100k-test-scaled.npz",
+            "stats_path": "reports/results/HDFS1-skipgram-average-100k-lr.json",
             "model": "logistic_regression",
             "model_args": {
                 "C": 100,
@@ -16,9 +16,9 @@
         },
         {
             "action": "train_test_model",
-            "train_path": "data/processed/HDFS_1/fasttext-average-train-scaled.npz",
-            "test_path": "data/processed/HDFS_1/fasttext-average-test-scaled.npz",
-            "stats_dir": "reports/results/HDFS_1-skipgram-average-tree",
+            "train_path": "data/processed/HDFS1/fasttext-average-100k-train-scaled.npz",
+            "test_path": "data/processed/HDFS1/fasttext-average-100k-test-scaled.npz",
+            "stats_path": "reports/results/HDFS1-skipgram-average-100k-tree.json",
             "model": "decision_tree",
             "model_args": {},
             "force": false,
@@ -26,9 +26,9 @@
         },
         {
             "action": "train_test_model",
-            "train_path": "data/processed/HDFS_1/fasttext-average-train-scaled.npz",
-            "test_path": "data/processed/HDFS_1/fasttext-average-test-scaled.npz",
-            "stats_dir": "reports/results/HDFS_1-skipgram-average-svc",
+            "train_path": "data/processed/HDFS1/fasttext-average-100k-train-scaled.npz",
+            "test_path": "data/processed/HDFS1/fasttext-average-100k-test-scaled.npz",
+            "stats_path": "reports/results/HDFS1-skipgram-average-100k-svc.json",
             "model": "linear_svc",
             "model_args": {
                 "penalty": "l1",

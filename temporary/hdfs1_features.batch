@@ -1,0 +1,10 @@
+#!/bin/bash
+#SBATCH --partition=cpu
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --job-name hdfs1_preprocess_fasttext
+#SBATCH --output .hdfs1_preprocess_fasttext_%j.out
+
+"${PYTHON_INTERPRETER}" -m ml4logs "${PROJECT_DIR}/configs/HDFS1-preprocess_fasttext.json"

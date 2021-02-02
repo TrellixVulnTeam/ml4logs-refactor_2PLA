@@ -3,6 +3,7 @@
 import logging
 import pathlib
 import tarfile
+import itertools as itools
 
 # === Thirdparty ===
 import requests
@@ -52,8 +53,8 @@ def extract(args):
 
 def prepare(args):
     HANDLERS = {
-        'HDFS_1': prepare_hdfs_1,
-        'HDFS_2': prepare_hdfs_2,
+        'HDFS1': prepare_hdfs_1,
+        'HDFS2': prepare_hdfs_2,
         'BGL': prepare_bgl
     }
 
@@ -95,3 +96,23 @@ def prepare_hdfs_2(args):
 
 def prepare_bgl(args):
     logger.error('Prepare is not implemented for \'%s\'', args['dataset'])
+
+
+def head(args):
+    logs_path = pathlib.Path(args['logs_path'])
+    logs_head_path = pathlib.Path(args['logs_head_path'])
+
+    if not args['force'] and logs_head_path.exists():
+        logger.info('File \'%s\' already exists and \'force\' is false',
+                    logs_head_path)
+        return
+    if not logs_path.exists():
+        logger.error('File \'%s\' does not exist', logs_path)
+        return
+    logs_head_path.parent.mkdir(parents=True, exist_ok=True)
+
+    logger.info('Read first %d lines from \'%s\'', args['n_rows'], logs_path)
+    with logs_path.open() as in_f:
+        logs_head = tuple(itools.islice(in_f, args['n_rows']))
+    logger.info('Save them into \'%s\'', logs_head_path)
+    logs_head_path.write_text('\n'.join(logs_head))

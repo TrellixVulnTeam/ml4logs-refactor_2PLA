@@ -1,0 +1,48 @@
+{
+    "pipeline": [
+        {
+            "action": "train_test_model",
+            "train_path": "data/processed/HDFS1/fasttext-average-100k-train-scaled.npz",
+            "test_path": "data/processed/HDFS1/fasttext-average-100k-test-scaled.npz",
+            "stats_path": "reports/results/HDFS1-skipgram-average-100k-lof.json",
+            "model": "lof",
+            "model_args": {},
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "train_test_model",
+            "train_path": "data/processed/HDFS1/fasttext-average-100k-train-scaled.npz",
+            "test_path": "data/processed/HDFS1/fasttext-average-100k-test-scaled.npz",
+            "stats_path": "reports/results/HDFS1-skipgram-average-100k-one_class_svm.json",
+            "model": "one_class_svm",
+            "model_args": {},
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "train_test_model",
+            "train_path": "data/processed/HDFS1/fasttext-average-100k-train-scaled.npz",
+            "test_path": "data/processed/HDFS1/fasttext-average-100k-test-scaled.npz",
+            "stats_path": "reports/results/HDFS1-skipgram-average-100k-isolation_forest.json",
+            "model": "isolation_forest",
+            "model_args": {
+                "random_state": 14235
+            },
+            "force": false,
+            "skip": false
+        },
+        {
+            "action": "train_test_model",
+            "train_path": "data/processed/HDFS1/fasttext-average-100k-train-scaled.npz",
+            "test_path": "data/processed/HDFS1/fasttext-average-100k-test-scaled.npz",
+            "stats_path": "reports/results/HDFS1-skipgram-average-100k-pca.json",
+            "model": "pca",
+            "model_args": {
+                "random_state": 14235
+            },
+            "force": false,
+            "skip": false
+        }
+    ]
+}

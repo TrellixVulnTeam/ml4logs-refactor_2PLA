@@ -2,6 +2,7 @@
 # === Standard library ===
 import logging
 import pathlib
+import warnings
 
 # === Thirdparty ===
 import numpy as np
@@ -9,6 +10,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import LinearSVC
 from sklearn.calibration import CalibratedClassifierCV
+from pyod.models.lof import LOF
+from pyod.models.ocsvm import OCSVM
+from pyod.models.iforest import IForest
+from pyod.models.pca import PCA
 from sklearn.metrics import (roc_auc_score,
                              average_precision_score,
                              precision_recall_fscore_support)
@@ -37,10 +42,16 @@ class LinearSVCWrapper:
 
 # ===== FUNCTIONS =====
 def train_test_model(args):
+    logger.info('Model is \'%s\'', args['model'])
+
     MODEL_CLASSES = {
         'logistic_regression': LogisticRegression,
         'decision_tree': DecisionTreeClassifier,
-        'linear_svc': LinearSVCWrapper
+        'linear_svc': LinearSVCWrapper,
+        'lof': LOF,
+        'one_class_svm': OCSVM,
+        'isolation_forest': IForest,
+        'pca': PCA
     }
 
     train_path = pathlib.Path(args['train_path'])
@@ -65,7 +76,9 @@ def train_test_model(args):
     logger.info('Initialize model \'%s\'', args['model'])
     model = MODEL_CLASSES[args['model']](**args['model_args'])
     logger.info('Fit train data to model')
-    model.fit(npzfile_train['X'], npzfile_train['Y'])
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        model.fit(npzfile_train['X'], npzfile_train['Y'])
     logger.info('Predict classes and probability on test data')
     c_pred = model.predict(npzfile_test['X'])
     y_pred = model.predict_proba(npzfile_test['X'])[:, 1]

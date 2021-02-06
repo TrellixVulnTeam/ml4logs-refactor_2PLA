@@ -85,44 +85,56 @@
             "skip": false
         },
         {
-            "action": "train_test_model",
+            "action": "train_test_models",
             "train_path": "data/processed/HDFS1/fasttext-average-100k-train-scaled.npz",
             "test_path": "data/processed/HDFS1/fasttext-average-100k-test-scaled.npz",
-            "stats_path": "reports/results/HDFS1-skipgram-average-100k-lr.json",
-            "model": "logistic_regression",
-            "model_args": {
-                "C": 100,
-                "tol": 1e-2,
-                "max_iter": 1000,
-                "random_state": 14235
-            },
-            "force": false,
-            "skip": false
-        },
-        {
-            "action": "train_test_model",
-            "train_path": "data/processed/HDFS1/fasttext-average-100k-train-scaled.npz",
-            "test_path": "data/processed/HDFS1/fasttext-average-100k-test-scaled.npz",
-            "stats_path": "reports/results/HDFS1-skipgram-average-100k-tree.json",
-            "model": "decision_tree",
-            "model_args": {
-                "random_state": 14235
-            },
-            "force": false,
-            "skip": false
-        },
-        {
-            "action": "train_test_model",
-            "train_path": "data/processed/HDFS1/fasttext-average-100k-train-scaled.npz",
-            "test_path": "data/processed/HDFS1/fasttext-average-100k-test-scaled.npz",
-            "stats_path": "reports/results/HDFS1-skipgram-average-100k-svc.json",
-            "model": "linear_svc",
-            "model_args": {
-                "penalty": "l1",
-                "tol": 0.1,
-                "dual": false,
-                "random_state": 14235
-            },
+            "stats_path": "reports/results/HDFS1-skipgram-average-100k.json",
+            "models": [
+                {
+                    "name": "logistic_regression",
+                    "args": {
+                        "C": 100,
+                        "tol": 1e-2,
+                        "max_iter": 1000,
+                        "random_state": 14235
+                    }
+                },
+                {
+                    "name": "decision_tree",
+                    "args": {
+                        "random_state": 14235
+                    }
+                },
+                {
+                    "name": "linear_svc",
+                    "args": {
+                        "penalty": "l1",
+                        "tol": 0.1,
+                        "dual": false,
+                        "random_state": 14235
+                    }
+                },
+                {
+                    "name": "lof",
+                    "args": {}
+                },
+                {
+                    "name": "one_class_svm",
+                    "args": {}
+                },
+                {
+                    "name": "isolation_forest",
+                    "args": {
+                        "random_state": 14235
+                    }
+                },
+                {
+                    "name": "pca",
+                    "args": {
+                        "random_state": 14235
+                    }
+                }
+            ],
             "force": false,
             "skip": false
         }

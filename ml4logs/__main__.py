@@ -27,7 +27,8 @@ def main():
         'aggregate': ml4logs.features.aggregate.aggregate,
         'split': ml4logs.features.utils.split,
         'scale': ml4logs.features.utils.scale,
-        'train_test_model': ml4logs.models.train_test.train_test_model
+        'train_test_model': ml4logs.models.train_test.train_test_model,
+        'train_test_models': ml4logs.models.train_test.train_test_models
     }
 
     parser = argparse.ArgumentParser()
@@ -44,9 +45,9 @@ def main():
     logger.info('Execute pipeline')
     for step in config['pipeline']:
         if step['skip']:
-            logger.info('Skip \'%s\' step', step['action'])
+            logger.info('========== Skip \'%s\' step', step['action'])
             continue
-        logger.info('Perform \'%s\' step', step['action'])
+        logger.info('========== Perform \'%s\' step', step['action'])
         COMMANDS[step['action']](step)
 
 

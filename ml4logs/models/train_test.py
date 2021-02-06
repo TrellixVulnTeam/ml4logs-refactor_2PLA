@@ -3,6 +3,7 @@
 import logging
 import pathlib
 import warnings
+import json
 
 # === Thirdparty ===
 import numpy as np
@@ -40,33 +41,90 @@ class LinearSVCWrapper:
         return self._clf.predict_proba(X)
 
 
+# ===== CONSTANTS =====
+MODEL_CLASSES = {
+    'logistic_regression': LogisticRegression,
+    'decision_tree': DecisionTreeClassifier,
+    'linear_svc': LinearSVCWrapper,
+    'lof': LOF,
+    'one_class_svm': OCSVM,
+    'isolation_forest': IForest,
+    'pca': PCA
+}
+
+
 # ===== FUNCTIONS =====
-def train_test_model(args):
-    logger.info('Model is \'%s\'', args['model'])
-
-    MODEL_CLASSES = {
-        'logistic_regression': LogisticRegression,
-        'decision_tree': DecisionTreeClassifier,
-        'linear_svc': LinearSVCWrapper,
-        'lof': LOF,
-        'one_class_svm': OCSVM,
-        'isolation_forest': IForest,
-        'pca': PCA
-    }
-
+def train_test_models(args):
     train_path = pathlib.Path(args['train_path'])
     test_path = pathlib.Path(args['test_path'])
-    # stats_dir = pathlib.Path(args['stats_dir'])
+    stats_path = pathlib.Path(args['stats_path'])
 
-    # if not args['force'] and stats_dir.exists():
-    #     logger.info('Folder \'%s\' already exists and \'force\' is false',
-    #                 stats_dir)
-    #     return
+    if not args['force'] and stats_path.exists():
+        logger.info('File \'%s\' already exists and \'force\' is false',
+                    stats_path)
+        return
     FILES_TO_CHECK = [train_path, test_path]
     for file_path in FILES_TO_CHECK:
         if not file_path.exists():
             logger.error('File \'%s\' does not exist', file_path)
             return
+    stats_path.parent.mkdir(parents=True, exist_ok=True)
+
+    logger.info('Load train dataset from \'%s\'', train_path)
+    npzfile_train = np.load(train_path)
+    logger.info('Load test dataset from \'%s\'', test_path)
+    npzfile_test = np.load(test_path)
+
+    stats = {'step': args, 'metrics': {}}
+    for m_dict in args['models']:
+        logger.info('Use \'%s\' model', m_dict['name'])
+        model = MODEL_CLASSES[m_dict['name']](**m_dict['args'])
+
+        logger.info('Fit train data to model')
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            model.fit(npzfile_train['X'], npzfile_train['Y'])
+
+        logger.info('Predict classes and probability on test data')
+        c_pred = model.predict(npzfile_test['X'])
+        y_pred = model.predict_proba(npzfile_test['X'])[:, 1]
+        logger.info('Compute couple of metrics on test data')
+        auc = roc_auc_score(npzfile_test['Y'], y_pred)
+        ap = average_precision_score(npzfile_test['Y'], y_pred)
+        precision, recall, f1, _ = precision_recall_fscore_support(
+            npzfile_test['Y'], c_pred, average='binary', zero_division=0
+        )
+        logger.info('AUC = %.2f, AP = %.2f', auc, ap)
+        logger.info('Precision = %.2f, Recall = %.2f, F1-score = %.2f',
+                    precision, recall, f1)
+
+        stats['metrics'][m_dict['name']] = {'auc': auc,
+                                            'ap': ap,
+                                            'precision': precision,
+                                            'recall': recall,
+                                            'f1': f1}
+
+    logger.info('Save metrics into \'%s\'', stats_path)
+    stats_path.write_text(json.dumps(stats, indent=4))
+
+
+def train_test_model(args):
+    logger.info('Model is \'%s\'', args['model'])
+
+    train_path = pathlib.Path(args['train_path'])
+    test_path = pathlib.Path(args['test_path'])
+    stats_path = pathlib.Path(args['stats_path'])
+
+    if not args['force'] and stats_path.exists():
+        logger.info('File \'%s\' already exists and \'force\' is false',
+                    stats_path)
+        return
+    FILES_TO_CHECK = [train_path, test_path]
+    for file_path in FILES_TO_CHECK:
+        if not file_path.exists():
+            logger.error('File \'%s\' does not exist', file_path)
+            return
+    stats_path.parent.mkdir(parents=True, exist_ok=True)
 
     logger.info('Load train dataset from \'%s\'', train_path)
     npzfile_train = np.load(train_path)
@@ -92,3 +150,9 @@ def train_test_model(args):
     logger.info('AUC = %.2f, AP = %.2f', auc, ap)
     logger.info('Precision = %.2f, Recall = %.2f, F1-score = %.2f',
                 precision, recall, f1)
+
+    logger.info('Save metrics into \'%s\'', stats_path)
+    metrics = {'auc': auc, 'ap': ap,
+               'precision': precision, 'recall': recall, 'f1': f1}
+    data = {'step': args, 'metrics': metrics}
+    stats_path.write_text(json.dumps(data, indent=4))

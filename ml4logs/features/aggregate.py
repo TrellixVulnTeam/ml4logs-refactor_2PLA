@@ -17,7 +17,8 @@ logger = logging.getLogger(__name__)
 # ===== FUNCTIONS =====
 def aggregate(args):
     HANDLERS = {
-        'HDFS1': aggregate_hdfs
+        'HDFS1': aggregate_hdfs,
+        'BGL': aggregate_bgl
     }
 
     if args['dataset'] not in HANDLERS:
@@ -109,3 +110,29 @@ def min_per_block(embeddings, blocks):
         for bid in blocks:
             result[bid] = np.fmin(result.get(bid, embedding), embedding)
     return result
+
+
+def aggregate_bgl(args):
+    labels_path = pathlib.Path(args['labels_path'])
+    embeddings_path = pathlib.Path(args['embeddings_path'])
+    out_path = pathlib.Path(args['out_path'])
+
+    if not args['force'] and out_path.exists():
+        logger.info('File \'%s\' already exists and \'force\' is false',
+                    out_path)
+        return
+    FILES_TO_CHECK = [labels_path, embeddings_path]
+    for file_path in FILES_TO_CHECK:
+        if not file_path.exists():
+            logger.error('File \'%s\' does not exist', file_path)
+            return
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    logger.info('Load embeddings from \'%s\'', embeddings_path)
+    X = np.load(embeddings_path)
+    logger.info('Read labels from \'%s\'', labels_path)
+    labels = np.load(labels_path)
+    Y = labels[:len(X)]
+    logger.info('X = %s, Y = %s', X.shape, Y.shape)
+    logger.info('Save dataset into \'%s\'', out_path)
+    np.savez(out_path, X=X, Y=Y)

@@ -16,3 +16,6 @@ requirements:
 
 hdfs1_100k:
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/hdfs1_100k.batch"
+
+bgl_100k:
+	"${PYTHON_INTERPRETER}" -m ml4logs "${PROJECT_DIR}/configs/bgl_100k.json"

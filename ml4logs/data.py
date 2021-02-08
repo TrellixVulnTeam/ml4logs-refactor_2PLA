@@ -56,7 +56,8 @@ def prepare(args):
     HANDLERS = {
         'HDFS1': prepare_hdfs_1,
         'HDFS2': prepare_hdfs_2,
-        'BGL': prepare_bgl
+        'BGL': prepare_bgl,
+        'Thunderbird': prepare_thunderbird
     }
 
     if args['dataset'] not in HANDLERS:
@@ -96,12 +97,18 @@ def prepare_hdfs_2(args):
 
 
 def prepare_bgl(args):
-    NORMAL_LABEL = '-'
-
     in_dir = pathlib.Path(args['in_dir'])
+    split_labels(args, in_dir / 'BGL.log', '-')
+
+
+def prepare_thunderbird(args):
+    in_dir = pathlib.Path(args['in_dir'])
+    split_labels(args, in_dir / 'Thunderbird.log', '-')
+
+
+def split_labels(args, in_path, normal_label):
     out_logs_path = pathlib.Path(args['logs_path'])
     out_labels_path = pathlib.Path(args['labels_path'])
-    in_path = in_dir / 'BGL.log'
 
     if not args['force'] and out_logs_path.exists() \
             and out_labels_path.exists():
@@ -123,7 +130,7 @@ def prepare_bgl(args):
     out_logs_path.write_text('\n'.join(raw_logs), encoding='utf8')
     logger.info('Map labels to 0/1 (normal/anomaly)')
     labels = np.array(tuple(map(
-        lambda l: 0 if l == NORMAL_LABEL else 1, labels)))
+        lambda l: 0 if l == normal_label else 1, labels)))
     logger.info('Save labels into \'%s\'', out_labels_path)
     np.save(out_labels_path, labels)
 

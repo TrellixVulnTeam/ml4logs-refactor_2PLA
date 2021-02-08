@@ -19,3 +19,6 @@ hdfs1_100k:
 
 bgl_100k:
 	"${PYTHON_INTERPRETER}" -m ml4logs "${PROJECT_DIR}/configs/bgl_100k.json"
+
+thunderbird_100k:
+	"${PYTHON_INTERPRETER}" -m ml4logs "${PROJECT_DIR}/configs/thunderbird_100k.json"

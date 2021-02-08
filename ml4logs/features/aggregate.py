@@ -18,7 +18,8 @@ logger = logging.getLogger(__name__)
 def aggregate(args):
     HANDLERS = {
         'HDFS1': aggregate_hdfs,
-        'BGL': aggregate_bgl
+        'BGL': aggregate_merge_XY,
+        'Thunderbird': aggregate_merge_XY
     }
 
     if args['dataset'] not in HANDLERS:
@@ -112,7 +113,7 @@ def min_per_block(embeddings, blocks):
     return result
 
 
-def aggregate_bgl(args):
+def aggregate_merge_XY(args):
     labels_path = pathlib.Path(args['labels_path'])
     embeddings_path = pathlib.Path(args['embeddings_path'])
     out_path = pathlib.Path(args['out_path'])

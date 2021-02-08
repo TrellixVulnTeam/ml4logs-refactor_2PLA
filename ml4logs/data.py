@@ -113,6 +113,7 @@ def head(args):
 
     logger.info('Read first %d lines from \'%s\'', args['n_rows'], logs_path)
     with logs_path.open() as in_f:
-        logs_head = tuple(itools.islice(in_f, args['n_rows']))
+        logs_head = tuple(map(
+            lambda l: l.strip(), itools.islice(in_f, args['n_rows'])))
     logger.info('Save them into \'%s\'', logs_head_path)
     logs_head_path.write_text('\n'.join(logs_head))

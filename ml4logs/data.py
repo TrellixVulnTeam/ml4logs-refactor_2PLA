@@ -7,6 +7,7 @@ import itertools as itools
 
 # === Thirdparty ===
 import requests
+import numpy as np
 
 
 # ===== GLOBALS =====
@@ -95,7 +96,36 @@ def prepare_hdfs_2(args):
 
 
 def prepare_bgl(args):
-    logger.error('Prepare is not implemented for \'%s\'', args['dataset'])
+    NORMAL_LABEL = '-'
+
+    in_dir = pathlib.Path(args['in_dir'])
+    out_logs_path = pathlib.Path(args['logs_path'])
+    out_labels_path = pathlib.Path(args['labels_path'])
+    in_path = in_dir / 'BGL.log'
+
+    if not args['force'] and out_logs_path.exists() \
+            and out_labels_path.exists():
+        logger.info('Output files already exists')
+        return
+    if not in_path.exists():
+        logger.error('File \'%s\' does not exist', in_path)
+        return
+    FOLDERS_TO_CREATE = [out_logs_path.parent, out_labels_path.parent]
+    for folder in FOLDERS_TO_CREATE:
+        folder.mkdir(parents=True, exist_ok=True)
+
+    logger.info('Read logs from \'%s\'', in_path)
+    logs = in_path.read_text(encoding='utf8').strip().split('\n')
+    logger.info('Split them into labels and raw logs')
+    labels, raw_logs = tuple(zip(*map(
+        lambda line: line.split(maxsplit=1), logs)))
+    logger.info('Save raw logs into \'%s\'', out_logs_path)
+    out_logs_path.write_text('\n'.join(raw_logs), encoding='utf8')
+    logger.info('Map labels to 0/1 (normal/anomaly)')
+    labels = np.array(tuple(map(
+        lambda l: 0 if l == NORMAL_LABEL else 1, labels)))
+    logger.info('Save labels into \'%s\'', out_labels_path)
+    np.save(out_labels_path, labels)
 
 
 def head(args):

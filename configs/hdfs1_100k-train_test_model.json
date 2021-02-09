@@ -12,7 +12,6 @@
                 "max_iter": 1000,
                 "random_state": 14235
             },
-            "force": false,
             "skip": false
         },
         {
@@ -24,7 +23,6 @@
             "model_args": {
                 "random_state": 14235
             },
-            "force": false,
             "skip": false
         },
         {
@@ -39,7 +37,6 @@
                 "dual": false,
                 "random_state": 14235
             },
-            "force": false,
             "skip": false
         },
         {
@@ -49,7 +46,6 @@
             "stats_path": "reports/results/HDFS1-skipgram-average-100k-lof.json",
             "model": "lof",
             "model_args": {},
-            "force": false,
             "skip": false
         },
         {
@@ -59,7 +55,6 @@
             "stats_path": "reports/results/HDFS1-skipgram-average-100k-one_class_svm.json",
             "model": "one_class_svm",
             "model_args": {},
-            "force": false,
             "skip": false
         },
         {
@@ -71,7 +66,6 @@
             "model_args": {
                 "random_state": 14235
             },
-            "force": false,
             "skip": false
         },
         {
@@ -83,7 +77,6 @@
             "model_args": {
                 "random_state": 14235
             },
-            "force": false,
             "skip": false
         }
     ]

@@ -4,14 +4,12 @@
             "action": "download",
             "url": "https://zenodo.org/record/3227177/files/Thunderbird.tar.gz",
             "path": "data/raw/Thunderbird.tar.gz",
-            "force": false,
             "skip": false
         },
         {
             "action": "extract",
             "in_path": "data/raw/Thunderbird.tar.gz",
             "out_dir": "data/raw/Thunderbird",
-            "force": false,
             "skip": false
         },
         {
@@ -20,7 +18,6 @@
             "in_dir": "data/raw/Thunderbird",
             "logs_path": "data/interim/Thunderbird/logs.txt",
             "labels_path": "data/interim/Thunderbird/labels.npy",
-            "force": false,
             "skip": false
         },
         {
@@ -28,7 +25,6 @@
             "logs_path": "data/interim/Thunderbird/logs.txt",
             "logs_head_path": "data/interim/Thunderbird/logs-100k.txt",
             "n_rows": 100000,
-            "force": false,
             "skip": false
         },
         {
@@ -43,7 +39,6 @@
                 "thread": 1,
                 "verbose": 2
             },
-            "force": false,
             "skip": false
         },
         {
@@ -51,7 +46,6 @@
             "logs_path": "data/interim/Thunderbird/logs-100k.txt",
             "model_path": "models/embeddings/fasttext_skipgram-thunderbird-100k.bin",
             "embeddings_path": "data/interim/Thunderbird/fasttext-100k.npy",
-            "force": false,
             "skip": false
         },
         {
@@ -60,7 +54,6 @@
             "labels_path": "data/interim/Thunderbird/labels.npy",
             "embeddings_path": "data/interim/Thunderbird/fasttext-100k.npy",
             "out_path": "data/interim/Thunderbird/fasttext-100k.npz",
-            "force": false,
             "skip": false
         },
         {
@@ -70,7 +63,6 @@
             "test_path": "data/interim/Thunderbird/fasttext-100k-test.npz",
             "train_size": 0.2,
             "seed": 14235,
-            "force": false,
             "skip": false
         },
         {
@@ -79,7 +71,6 @@
             "test_path": "data/interim/Thunderbird/fasttext-100k-test.npz",
             "train_scaled_path": "data/processed/Thunderbird/fasttext-100k-train-scaled.npz",
             "test_scaled_path": "data/processed/Thunderbird/fasttext-100k-test-scaled.npz",
-            "force": false,
             "skip": false
         },
         {
@@ -133,7 +124,6 @@
                     }
                 }
             ],
-            "force": false,
             "skip": false
         }
     ]

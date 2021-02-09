@@ -17,13 +17,6 @@ def train_fasttext(args):
     logs_path = pathlib.Path(args['logs_path'])
     model_path = pathlib.Path(args['model_path'])
 
-    if not args['force'] and model_path.exists():
-        logger.info('File \'%s\' already exists and \'force\' is false',
-                    model_path)
-        return
-    if not logs_path.exists():
-        logger.error('File \'%s\' does not exist', logs_path)
-        return
     model_path.parent.mkdir(parents=True, exist_ok=True)
 
     logger.info('Train fasttext model on \'%s\'', logs_path)
@@ -37,15 +30,6 @@ def preprocess_fasttext(args):
     model_path = pathlib.Path(args['model_path'])
     embeddings_path = pathlib.Path(args['embeddings_path'])
 
-    if not args['force'] and embeddings_path.exists():
-        logger.info('File \'%s\' already exists and \'force\' is false',
-                    embeddings_path)
-        return
-    FILES_TO_CHECK = [logs_path, model_path]
-    for file_path in FILES_TO_CHECK:
-        if not file_path.exists():
-            logger.error('File \'%s\' does not exist', file_path)
-            return
     embeddings_path.parent.mkdir(parents=True, exist_ok=True)
 
     logger.info('Read logs from \'%s\'', logs_path)

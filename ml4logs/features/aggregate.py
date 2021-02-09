@@ -22,10 +22,6 @@ def aggregate(args):
         'Thunderbird': aggregate_merge_XY
     }
 
-    if args['dataset'] not in HANDLERS:
-        logger.error('Unknown dataset \'%s\'', args['dataset'])
-        return
-
     HANDLERS[args['dataset']](args)
 
 
@@ -42,15 +38,6 @@ def aggregate_hdfs(args):
     embeddings_path = pathlib.Path(args['embeddings_path'])
     out_path = pathlib.Path(args['out_path'])
 
-    if not args['force'] and out_path.exists():
-        logger.info('File \'%s\' already exists and \'force\' is false',
-                    out_path)
-        return
-    FILES_TO_CHECK = [logs_path, labels_path, embeddings_path]
-    for file_path in FILES_TO_CHECK:
-        if not file_path.exists():
-            logger.error('File \'%s\' does not exist', file_path)
-            return
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     logger.info('Read logs from \'%s\'', logs_path)
@@ -119,15 +106,6 @@ def aggregate_merge_XY(args):
     embeddings_path = pathlib.Path(args['embeddings_path'])
     out_path = pathlib.Path(args['out_path'])
 
-    if not args['force'] and out_path.exists():
-        logger.info('File \'%s\' already exists and \'force\' is false',
-                    out_path)
-        return
-    FILES_TO_CHECK = [labels_path, embeddings_path]
-    for file_path in FILES_TO_CHECK:
-        if not file_path.exists():
-            logger.error('File \'%s\' does not exist', file_path)
-            return
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     logger.info('Load embeddings from \'%s\'', embeddings_path)

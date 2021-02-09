@@ -35,10 +35,6 @@ def main():
     parser.add_argument('config_path', type=pathlib.Path)
     args = parser.parse_args()
 
-    if not args.config_path.exists():
-        logger.error('File \'%s\' does not exist', args.config_path)
-        return
-
     logger.info('Read config file \'%s\'', args.config_path)
     config = json.loads(args.config_path.read_text())
 

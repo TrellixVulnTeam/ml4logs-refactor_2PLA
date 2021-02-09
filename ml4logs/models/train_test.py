@@ -59,15 +59,6 @@ def train_test_models(args):
     test_path = pathlib.Path(args['test_path'])
     stats_path = pathlib.Path(args['stats_path'])
 
-    if not args['force'] and stats_path.exists():
-        logger.info('File \'%s\' already exists and \'force\' is false',
-                    stats_path)
-        return
-    FILES_TO_CHECK = [train_path, test_path]
-    for file_path in FILES_TO_CHECK:
-        if not file_path.exists():
-            logger.error('File \'%s\' does not exist', file_path)
-            return
     stats_path.parent.mkdir(parents=True, exist_ok=True)
 
     logger.info('Load train dataset from \'%s\'', train_path)
@@ -115,15 +106,6 @@ def train_test_model(args):
     test_path = pathlib.Path(args['test_path'])
     stats_path = pathlib.Path(args['stats_path'])
 
-    if not args['force'] and stats_path.exists():
-        logger.info('File \'%s\' already exists and \'force\' is false',
-                    stats_path)
-        return
-    FILES_TO_CHECK = [train_path, test_path]
-    for file_path in FILES_TO_CHECK:
-        if not file_path.exists():
-            logger.error('File \'%s\' does not exist', file_path)
-            return
     stats_path.parent.mkdir(parents=True, exist_ok=True)
 
     logger.info('Load train dataset from \'%s\'', train_path)

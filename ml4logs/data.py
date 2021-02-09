@@ -18,11 +18,6 @@ logger = logging.getLogger(__name__)
 def download(args):
     path = pathlib.Path(args['path'])
 
-    if not args['force'] and path.exists():
-        logger.info('File \'%s\' exists', path.name)
-        logger.info('Argument \'force\' is false')
-        logger.info('Skip download step')
-        return
     path.parent.mkdir(parents=True, exist_ok=True)
 
     logger.info('Download \'%s\'', args['url'])
@@ -35,20 +30,11 @@ def extract(args):
     in_path = pathlib.Path(args['in_path'])
     out_dir = pathlib.Path(args['out_dir'])
 
-    if not in_path.exists():
-        logger.error('File \'%s\' does not exist', in_path)
-        return
     out_dir.mkdir(parents=True, exist_ok=True)
 
     logger.info('Open \'%s\' as tarfile', in_path)
     with tarfile.open(in_path, 'r:gz') as tar:
         members = tar.getmembers()
-        if not args['force']:
-            logger.info('Filter out existing files')
-            members = list(filter(
-                lambda m: not (out_dir / m.name).exists(),
-                members
-            ))
         logger.info('Extract %d files', len(members))
         tar.extractall(out_dir, members=members)
 
@@ -60,10 +46,6 @@ def prepare(args):
         'BGL': prepare_bgl,
         'Thunderbird': prepare_thunderbird
     }
-
-    if args['dataset'] not in HANDLERS:
-        logger.error('Unknown dataset \'%s\'', args['dataset'])
-        return
 
     HANDLERS[args['dataset']](args)
 
@@ -82,13 +64,6 @@ def prepare_hdfs_1(args):
         (in_dir / 'anomaly_label.csv', out_labels_path)
     ]
     for in_path, out_path in FILES_TO_RENAME:
-        if not args['force'] and out_path.exists():
-            logger.info('File \'%s\' already exists and \'force\' is false',
-                        out_path)
-            continue
-        if not in_path.exists():
-            logger.error('File \'%s\' does not exist', in_path)
-            continue
         logger.info('Rename \'%s\' with \'%s\'', in_path, out_path)
         in_path.replace(out_path)
 
@@ -111,13 +86,6 @@ def split_labels(args, in_path, normal_label):
     out_logs_path = pathlib.Path(args['logs_path'])
     out_labels_path = pathlib.Path(args['labels_path'])
 
-    if not args['force'] and out_logs_path.exists() \
-            and out_labels_path.exists():
-        logger.info('Output files already exists')
-        return
-    if not in_path.exists():
-        logger.error('File \'%s\' does not exist', in_path)
-        return
     FOLDERS_TO_CREATE = [out_logs_path.parent, out_labels_path.parent]
     for folder in FOLDERS_TO_CREATE:
         folder.mkdir(parents=True, exist_ok=True)
@@ -140,13 +108,6 @@ def head(args):
     logs_path = pathlib.Path(args['logs_path'])
     logs_head_path = pathlib.Path(args['logs_head_path'])
 
-    if not args['force'] and logs_head_path.exists():
-        logger.info('File \'%s\' already exists and \'force\' is false',
-                    logs_head_path)
-        return
-    if not logs_path.exists():
-        logger.error('File \'%s\' does not exist', logs_path)
-        return
     logs_head_path.parent.mkdir(parents=True, exist_ok=True)
 
     logger.info('Read first %d lines from \'%s\'', args['n_rows'], logs_path)

@@ -19,15 +19,6 @@ def split(args):
     train_path = pathlib.Path(args['train_path'])
     test_path = pathlib.Path(args['test_path'])
 
-    if not args['force'] and train_path.exists() and test_path.exists():
-        logger.info(
-            'Files \'%s\' and \'%s\' already exists and \'force\' is false',
-            train_path, test_path
-        )
-        return
-    if not in_path.exists():
-        logger.error('File \'%s\' does not exist', in_path)
-        return
     train_path.parent.mkdir(parents=True, exist_ok=True)
     test_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -54,18 +45,6 @@ def scale(args):
     train_scaled_path = pathlib.Path(args['train_scaled_path'])
     test_scaled_path = pathlib.Path(args['test_scaled_path'])
 
-    if not args['force'] and train_scaled_path.exists() \
-            and test_scaled_path.exists():
-        logger.info(
-            'Files \'%s\' and \'%s\' already exists and \'force\' is false',
-            train_scaled_path, test_scaled_path
-        )
-        return
-    FILES_TO_CHECK = [train_path, test_path]
-    for file_path in FILES_TO_CHECK:
-        if not file_path.exists():
-            logger.error('File \'%s\' does not exist', file_path)
-            return
     train_scaled_path.parent.mkdir(parents=True, exist_ok=True)
     test_scaled_path.parent.mkdir(parents=True, exist_ok=True)
 

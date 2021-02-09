@@ -59,6 +59,7 @@ def aggregate_hdfs(args):
     embeddings = np.load(embeddings_path)
     logger.info('Read labels from \'%s\'', labels_path)
     labels = pd.read_csv(labels_path).set_index('BlockId')
+    logger.info('Map labels to 0/1 (normal/anomaly)')
     labels['Label'] = labels['Label'].map({'Normal': 0, 'Anomaly': 1})
 
     logger.info('Extract blocks from log lines')

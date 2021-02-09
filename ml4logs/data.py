@@ -19,8 +19,9 @@ def download(args):
     path = pathlib.Path(args['path'])
 
     if not args['force'] and path.exists():
-        logger.info('File \'%s\' already exists and \'force\' is false',
-                    path)
+        logger.info('File \'%s\' exists', path.name)
+        logger.info('Argument \'force\' is false')
+        logger.info('Skip download step')
         return
     path.parent.mkdir(parents=True, exist_ok=True)
 

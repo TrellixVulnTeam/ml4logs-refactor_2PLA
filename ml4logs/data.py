@@ -69,7 +69,7 @@ def prepare_hdfs_1(args):
 
 
 def prepare_hdfs_2(args):
-    logger.error('Prepare is not implemented for \'%s\'', args['dataset'])
+    raise NotImplementedError('Prepare is not implemented for HDFS2 dataset')
 
 
 def prepare_bgl(args):

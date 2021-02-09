@@ -41,9 +41,9 @@ def main():
     logger.info('Execute pipeline')
     for step in config['pipeline']:
         if step['skip']:
-            logger.info('========== Skip \'%s\' step', step['action'])
+            logger.info('===== Skip \'%s\' step =====', step['action'])
             continue
-        logger.info('========== Perform \'%s\' step', step['action'])
+        logger.info('===== Perform \'%s\' step =====', step['action'])
         COMMANDS[step['action']](step)
 
 

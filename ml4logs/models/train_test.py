@@ -68,7 +68,7 @@ def train_test_models(args):
 
     stats = {'step': args, 'metrics': {}}
     for m_dict in args['models']:
-        logger.info('Use \'%s\' model', m_dict['name'])
+        logger.info('=== Use \'%s\' model ===', m_dict['name'])
         model = MODEL_CLASSES[m_dict['name']](**m_dict['args'])
 
         logger.info('Fit train data to model')
@@ -76,10 +76,9 @@ def train_test_models(args):
             warnings.simplefilter("ignore")
             model.fit(npzfile_train['X'], npzfile_train['Y'])
 
-        logger.info('Predict classes and probability on test data')
+        logger.info('Compute metrics on test data')
         c_pred = model.predict(npzfile_test['X'])
         y_pred = model.predict_proba(npzfile_test['X'])[:, 1]
-        logger.info('Compute couple of metrics on test data')
         auc = roc_auc_score(npzfile_test['Y'], y_pred)
         ap = average_precision_score(npzfile_test['Y'], y_pred)
         precision, recall, f1, _ = precision_recall_fscore_support(
@@ -113,17 +112,15 @@ def train_test_model(args):
     logger.info('Load test dataset from \'%s\'', test_path)
     npzfile_test = np.load(test_path)
 
-    logger.info('Initialize model \'%s\'', args['model'])
     model = MODEL_CLASSES[args['model']](**args['model_args'])
     logger.info('Fit train data to model')
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         model.fit(npzfile_train['X'], npzfile_train['Y'])
-    logger.info('Predict classes and probability on test data')
+
+    logger.info('Compute metrics on test data')
     c_pred = model.predict(npzfile_test['X'])
     y_pred = model.predict_proba(npzfile_test['X'])[:, 1]
-
-    logger.info('Compute couple of metrics on test data')
     auc = roc_auc_score(npzfile_test['Y'], y_pred)
     ap = average_precision_score(npzfile_test['Y'], y_pred)
     precision, recall, f1, _ = precision_recall_fscore_support(

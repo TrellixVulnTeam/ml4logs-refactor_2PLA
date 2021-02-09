@@ -52,16 +52,16 @@ def prepare(args):
 
 def prepare_hdfs_1(args):
     in_dir = pathlib.Path(args['in_dir'])
-    out_logs_path = pathlib.Path(args['logs_path'])
-    out_labels_path = pathlib.Path(args['labels_path'])
+    logs_path = pathlib.Path(args['logs_path'])
+    labels_path = pathlib.Path(args['labels_path'])
 
-    FOLDERS_TO_CREATE = [out_logs_path.parent, out_labels_path.parent]
+    FOLDERS_TO_CREATE = [logs_path.parent, labels_path.parent]
     for folder in FOLDERS_TO_CREATE:
         folder.mkdir(parents=True, exist_ok=True)
 
     FILES_TO_RENAME = [
-        (in_dir / 'HDFS.log', out_logs_path),
-        (in_dir / 'anomaly_label.csv', out_labels_path)
+        (in_dir / 'HDFS.log', logs_path),
+        (in_dir / 'anomaly_label.csv', labels_path)
     ]
     for in_path, out_path in FILES_TO_RENAME:
         logger.info('Rename \'%s\' with \'%s\'', in_path, out_path)
@@ -83,10 +83,10 @@ def prepare_thunderbird(args):
 
 
 def split_labels(args, in_path, normal_label):
-    out_logs_path = pathlib.Path(args['logs_path'])
-    out_labels_path = pathlib.Path(args['labels_path'])
+    logs_path = pathlib.Path(args['logs_path'])
+    labels_path = pathlib.Path(args['labels_path'])
 
-    FOLDERS_TO_CREATE = [out_logs_path.parent, out_labels_path.parent]
+    FOLDERS_TO_CREATE = [logs_path.parent, labels_path.parent]
     for folder in FOLDERS_TO_CREATE:
         folder.mkdir(parents=True, exist_ok=True)
 
@@ -95,13 +95,13 @@ def split_labels(args, in_path, normal_label):
     logger.info('Split them into labels and raw logs')
     labels, raw_logs = tuple(zip(*map(
         lambda line: line.split(maxsplit=1), logs)))
-    logger.info('Save raw logs into \'%s\'', out_logs_path)
-    out_logs_path.write_text('\n'.join(raw_logs), encoding='utf8')
+    logger.info('Save raw logs into \'%s\'', logs_path)
+    logs_path.write_text('\n'.join(raw_logs), encoding='utf8')
     logger.info('Map labels to 0/1 (normal/anomaly)')
     labels = np.array(tuple(map(
         lambda l: 0 if l == normal_label else 1, labels)))
-    logger.info('Save labels into \'%s\'', out_labels_path)
-    np.save(out_labels_path, labels)
+    logger.info('Save labels into \'%s\'', labels_path)
+    np.save(labels_path, labels)
 
 
 def head(args):

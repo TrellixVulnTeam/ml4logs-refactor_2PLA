@@ -25,8 +25,7 @@ def split(args):
     logger.info('Load dataset from \'%s\'', in_path)
     npzfile = np.load(in_path)
     logger.info('Split with \'train size\' = %.2f and \'random seed\' = %d',
-                args['train_size'], args['seed']
-                )
+                args['train_size'], args['seed'])
     x_train, x_test, y_train, y_test = train_test_split(
         npzfile['X'], npzfile['Y'],
         train_size=args['train_size'], stratify=npzfile['Y'],

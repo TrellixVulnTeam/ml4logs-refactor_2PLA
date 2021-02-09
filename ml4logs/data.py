@@ -90,18 +90,27 @@ def split_labels(args, in_path, normal_label):
     for folder in FOLDERS_TO_CREATE:
         folder.mkdir(parents=True, exist_ok=True)
 
-    logger.info('Read logs from \'%s\'', in_path)
-    logs = in_path.read_text(encoding='utf8').strip().split('\n')
-    logger.info('Split them into labels and raw logs')
-    labels, raw_logs = tuple(zip(*map(
-        lambda line: line.split(maxsplit=1), logs)))
-    logger.info('Save raw logs into \'%s\'', logs_path)
-    logs_path.write_text('\n'.join(raw_logs), encoding='utf8')
-    logger.info('Map labels to 0/1 (normal/anomaly)')
-    labels = np.array(tuple(map(
-        lambda l: 0 if l == normal_label else 1, labels)))
-    logger.info('Save labels into \'%s\'', labels_path)
-    np.save(labels_path, labels)
+    n_lines = count_file_lines(in_path)
+    step = n_lines // 10
+    logger.info('Start splitting labels and log messages')
+    labels = []
+    with in_path.open(encoding='utf8') as in_f, \
+            logs_path.open('w', encoding='utf8') as logs_out_f:
+        for i, line in enumerate(in_f):
+            label, raw_log = tuple(line.strip().split(maxsplit=1))
+            logs_out_f.write(f'{raw_log}\n')
+            labels.append(0 if label == normal_label else 1)
+            if i % step <= 0:
+                logger.info('Processed %d / %d lines', i, n_lines)
+    np.save(labels_path, np.array(labels))
+
+
+def count_file_lines(path):
+    logger.info('Count lines in \'%s\'', path)
+    with path.open(encoding='utf8') as in_f:
+        for i, _ in enumerate(in_f):
+            pass
+    return i + 1
 
 
 def head(args):

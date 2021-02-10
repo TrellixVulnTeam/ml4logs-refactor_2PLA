@@ -9,6 +9,9 @@ import itertools as itools
 import requests
 import numpy as np
 
+# === Local ===
+import ml4logs
+
 
 # ===== GLOBALS =====
 logger = logging.getLogger(__name__)
@@ -90,7 +93,7 @@ def split_labels(args, in_path, normal_label):
     for folder in FOLDERS_TO_CREATE:
         folder.mkdir(parents=True, exist_ok=True)
 
-    n_lines = count_file_lines(in_path)
+    n_lines = ml4logs.utils.count_file_lines(in_path)
     step = n_lines // 10
     logger.info('Start splitting labels and log messages')
     labels = []
@@ -103,14 +106,6 @@ def split_labels(args, in_path, normal_label):
             if i % step <= 0:
                 logger.info('Processed %d / %d lines', i, n_lines)
     np.save(labels_path, np.array(labels))
-
-
-def count_file_lines(path):
-    logger.info('Count lines in \'%s\'', path)
-    with path.open(encoding='utf8') as in_f:
-        for i, _ in enumerate(in_f):
-            pass
-    return i + 1
 
 
 def head(args):

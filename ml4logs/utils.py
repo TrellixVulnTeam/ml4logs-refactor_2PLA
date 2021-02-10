@@ -17,3 +17,11 @@ def setup_logging(level=logging.INFO):
     stream_handler.setFormatter(formatter)
     root_logger.addHandler(stream_handler)
     logger.info('Root logger is configured')
+
+
+def count_file_lines(path):
+    logger.info('Count lines in \'%s\'', path)
+    with path.open(encoding='utf8') as in_f:
+        for i, _ in enumerate(in_f):
+            pass
+    return i + 1

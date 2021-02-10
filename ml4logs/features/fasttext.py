@@ -7,6 +7,9 @@ import pathlib
 import numpy as np
 import fasttext
 
+# === Local ===
+import ml4logs
+
 
 # ===== GLOBALS =====
 logger = logging.getLogger(__name__)
@@ -32,12 +35,18 @@ def preprocess_fasttext(args):
 
     embeddings_path.parent.mkdir(parents=True, exist_ok=True)
 
-    logger.info('Read logs from \'%s\'', logs_path)
-    logs = logs_path.read_text().strip().split('\n')
     logger.info('Load fasttext model from \'%s\'', model_path)
     model = fasttext.load_model(str(model_path))
-    logger.info('Obtain embeddings for logs')
-    embeddings = np.stack(tuple(map(model.get_sentence_vector, logs)))
-    logger.info('Embeddings shape is %s', embeddings.shape)
+    n_lines = ml4logs.utils.count_file_lines(logs_path)
+    step = n_lines // 10
+    logger.info('Start preprocessing using fasttext')
+    embeddings = []
+    with logs_path.open() as logs_in_f:
+        for i, line in enumerate(logs_in_f):
+            embedding = model.get_sentence_vector(line.strip())
+            embeddings.append(embedding)
+            if i % step <= 0:
+                logger.info('Processed %d / %d lines', i, n_lines)
+    embeddings = np.stack(embeddings)
     logger.info('Save embeddings into \'%s\'', embeddings_path)
     np.save(embeddings_path, embeddings)

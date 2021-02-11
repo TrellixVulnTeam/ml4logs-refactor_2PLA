@@ -17,6 +17,9 @@ requirements:
 hdfs1_fasttext_100k:
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/hdfs1_fasttext_100k.batch"
 
+hdfs1_drain_100k:
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/hdfs1_drain_100k.batch"
+
 bgl_100k:
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/bgl_100k.batch"
 

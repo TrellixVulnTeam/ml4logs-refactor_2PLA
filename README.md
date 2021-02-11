@@ -1,7 +1,7 @@
 ## How to test package (100k lines version)
 
 1. Activate your virtual environment (conda, venv)
-2. Install requirements using `make requirements` (not all are needed)
+2. Install requirements using `make requirements`
 3. Change `BASH_INTERPRETER` variable in `Makefile` (if needed)
 4. Run `make {COMMAND_NAME}`
 

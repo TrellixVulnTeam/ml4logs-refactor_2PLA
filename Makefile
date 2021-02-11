@@ -10,7 +10,6 @@ BASH_INTERPRETER = bash
 
 
 requirements:
-	# $(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
 	$(PYTHON_INTERPRETER) -m pip install -r "$(PROJECT_DIR)/requirements.txt"
 
 

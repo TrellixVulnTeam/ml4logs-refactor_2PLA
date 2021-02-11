@@ -14,8 +14,8 @@ requirements:
 	$(PYTHON_INTERPRETER) -m pip install -r "$(PROJECT_DIR)/requirements.txt"
 
 
-hdfs1_100k:
-	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/hdfs1_100k.batch"
+hdfs1_fasttext_100k:
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/hdfs1_fasttext_100k.batch"
 
 bgl_100k:
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/bgl_100k.batch"

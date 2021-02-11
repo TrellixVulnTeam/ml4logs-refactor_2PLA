@@ -61,3 +61,17 @@ def scale(args):
     np.savez(train_scaled_path, X=x_train_scaled, Y=npzfile_train['Y'])
     logger.info('Save test scaled dataset into \'%s\'', test_scaled_path)
     np.savez(test_scaled_path, X=x_test_scaled, Y=npzfile_test['Y'])
+
+
+def onehot(args):
+    in_path = pathlib.Path(args['in_path'])
+    out_path = pathlib.Path(args['out_path'])
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    logger.info('Load index array')
+    array = np.load(in_path)
+    logger.info('Create onehot encoded array')
+    onehot_array = np.eye(array.max() + 1)[array]
+    logger.info('Save onehot encoded array')
+    np.save(out_path, onehot_array)

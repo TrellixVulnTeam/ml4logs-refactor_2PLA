@@ -24,6 +24,8 @@ def main():
         'head': ml4logs.data.head,
         'train_fasttext': ml4logs.features.fasttext.train_fasttext,
         'preprocess_fasttext': ml4logs.features.fasttext.preprocess_fasttext,
+        'parse_ibm_drain': ml4logs.features.parser.parse_ibm_drain,
+        'onehot': ml4logs.features.utils.onehot,
         'aggregate': ml4logs.features.aggregate.aggregate,
         'split': ml4logs.features.utils.split,
         'scale': ml4logs.features.utils.scale,

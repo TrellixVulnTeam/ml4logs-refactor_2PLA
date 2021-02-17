@@ -37,18 +37,12 @@
             "skip": false
         },
         {
-            "action": "onehot",
-            "in_path": "data/interim/HDFS1/ibm_drain-eventids-100k.npy",
-            "out_path": "data/interim/HDFS1/ibm_drain-eventids-onehot-100k.npy",
-            "skip": false
-        },
-        {
             "action": "aggregate_by_blocks",
-            "features_path": "data/interim/HDFS1/ibm_drain-eventids-onehot-100k.npy",
+            "features_path": "data/interim/HDFS1/ibm_drain-eventids-100k.npy",
             "blocks_path": "data/interim/HDFS1/blocks.npy",
             "labels_path": "data/interim/HDFS1/labels.npy",
             "dataset_path": "data/interim/HDFS1/ibm_drain-100k.npz",
-            "method": "sum",
+            "method": "count_vector",
             "skip": false
         },
         {

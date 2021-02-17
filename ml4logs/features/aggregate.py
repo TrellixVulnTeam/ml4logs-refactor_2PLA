@@ -16,13 +16,6 @@ logger = logging.getLogger(__name__)
 
 # ===== FUNCTIONS =====
 def aggregate_by_blocks(args):
-    METHODS = {
-        'sum': lambda a: np.sum(a, axis=0),
-        'average': lambda a: np.average(a, axis=0),
-        'max': lambda a: np.nanmax(a, axis=0),
-        'min': lambda a: np.nanmin(a, axis=0)
-    }
-
     features_path = pathlib.Path(args['features_path'])
     blocks_path = pathlib.Path(args['blocks_path'])
     labels_path = pathlib.Path(args['labels_path'])
@@ -41,11 +34,19 @@ def aggregate_by_blocks(args):
         list_ = groups.setdefault(block, list())
         list_.append(array)
 
+    methods = {
+        'sum': lambda a: np.sum(a, axis=0),
+        'average': lambda a: np.average(a, axis=0),
+        'max': lambda a: np.nanmax(a, axis=0),
+        'min': lambda a: np.nanmin(a, axis=0),
+        'count_vector': lambda a: np.bincount(a, minlength=features.max() + 1)
+    }
+
     logger.info('Aggregate features using \'%s\' method', args['method'])
     Xs = []
     Ys = []
     for block, arrays in groups.items():
-        Xs.append(METHODS[args['method']](np.stack(arrays)))
+        Xs.append(methods[args['method']](np.stack(arrays)))
         Ys.append(labels[block])
     X = np.stack(Xs)
     Y = np.stack(Ys)

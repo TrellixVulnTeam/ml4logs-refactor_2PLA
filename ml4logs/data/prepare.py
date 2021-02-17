@@ -2,12 +2,9 @@
 # === Standard library ===
 import logging
 import pathlib
-import tarfile
 import re
-import itertools as itools
 
 # === Thirdparty ===
-import requests
 import numpy as np
 import pandas as pd
 
@@ -20,30 +17,6 @@ logger = logging.getLogger(__name__)
 
 
 # ===== FUNCTIONS =====
-def download(args):
-    path = pathlib.Path(args['path'])
-
-    ml4logs.utils.mkdirs(files=[path])
-
-    logger.info('Download \'%s\'', args['url'])
-    response = requests.get(args['url'])
-    logger.info('Save into \'%s\'', path)
-    path.write_bytes(response.content)
-
-
-def extract(args):
-    in_path = pathlib.Path(args['in_path'])
-    out_dir = pathlib.Path(args['out_dir'])
-
-    ml4logs.utils.mkdirs(folders=[out_dir])
-
-    logger.info('Open \'%s\' as tarfile', in_path)
-    with tarfile.open(in_path, 'r:gz') as tar:
-        members = tar.getmembers()
-        logger.info('Extract %d files', len(members))
-        tar.extractall(out_dir, members=members)
-
-
 def prepare(args):
     HANDLERS = {
         'HDFS1': prepare_hdfs_1,
@@ -121,17 +94,3 @@ def split_labels(args, in_path, normal_label):
                 logger.info('Processed %d / %d lines', i, n_lines)
     logger.info('Save labels into \'%s\'', labels_path)
     np.save(labels_path, np.array(labels))
-
-
-def head(args):
-    logs_path = pathlib.Path(args['logs_path'])
-    logs_head_path = pathlib.Path(args['logs_head_path'])
-
-    ml4logs.utils.mkdirs(files=[logs_head_path])
-
-    logger.info('Read first %d lines from \'%s\'', args['n_rows'], logs_path)
-    with logs_path.open() as in_f:
-        logs_head = tuple(map(
-            lambda l: l.strip(), itools.islice(in_f, args['n_rows'])))
-    logger.info('Save them into \'%s\'', logs_head_path)
-    logs_head_path.write_text('\n'.join(logs_head))

@@ -103,6 +103,7 @@ def split_labels(args, in_path, normal_label):
             labels.append(0 if label == normal_label else 1)
             if i % step <= 0:
                 logger.info('Processed %d / %d lines', i, n_lines)
+    logger.info('Save labels into \'%s\'', labels_path)
     np.save(labels_path, np.array(labels))
 
 

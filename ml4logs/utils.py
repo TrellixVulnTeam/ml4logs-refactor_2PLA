@@ -12,7 +12,9 @@ def setup_logging(level=logging.INFO):
     root_logger = logging.getLogger()
     root_logger.setLevel(level)
     LOG_FORMAT = '[{asctime}][{levelname}][{name}] {message}'
-    formatter = logging.Formatter(LOG_FORMAT, style='{')
+    DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+    formatter = logging.Formatter(
+        fmt=LOG_FORMAT, datefmt=DATE_FORMAT, style='{')
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
     root_logger.addHandler(stream_handler)

@@ -3,11 +3,13 @@
 import logging
 import pathlib
 import tarfile
+import re
 import itertools as itools
 
 # === Thirdparty ===
 import requests
 import numpy as np
+import pandas as pd
 
 # === Local ===
 import ml4logs
@@ -56,19 +58,33 @@ def prepare(args):
 def prepare_hdfs_1(args):
     in_dir = pathlib.Path(args['in_dir'])
     logs_path = pathlib.Path(args['logs_path'])
+    blocks_path = pathlib.Path(args['blocks_path'])
     labels_path = pathlib.Path(args['labels_path'])
 
-    FOLDERS_TO_CREATE = [logs_path.parent, labels_path.parent]
-    for folder in FOLDERS_TO_CREATE:
-        folder.mkdir(parents=True, exist_ok=True)
+    ml4logs.utils.mkdirs(files=[logs_path, labels_path, blocks_path])
 
-    FILES_TO_RENAME = [
-        (in_dir / 'HDFS.log', logs_path),
-        (in_dir / 'anomaly_label.csv', labels_path)
-    ]
-    for in_path, out_path in FILES_TO_RENAME:
-        logger.info('Rename \'%s\' with \'%s\'', in_path, out_path)
-        in_path.replace(out_path)
+    in_labels_path = in_dir / 'anomaly_label.csv'
+    logger.info('Read labels from \'%s\'', in_labels_path)
+    labels_df = pd.read_csv(in_labels_path)
+    logger.info('Map labels to 0/1 (normal/anomaly)')
+    labels = labels_df['Label'].map({'Normal': 0, 'Anomaly': 1}).to_numpy()
+    logger.info('Save mapped labels into \'%s\'', labels_path)
+    np.save(labels_path, labels)
+
+    in_logs_path = in_dir / 'HDFS.log'
+    logger.info('Move \'%s\' to \'%s\'', in_logs_path, logs_path)
+    in_logs_path.replace(logs_path)
+
+    blk_mapping = dict(zip(labels_df['BlockId'], labels_df.index))
+    pattern = re.compile(r'(blk_-?\d+)')
+    blocks = []
+    logger.info('Extract blocks from log lines')
+    with logs_path.open() as logs_in_f:
+        for line in logs_in_f:
+            match = pattern.search(line.strip())
+            blocks.append(blk_mapping[match.group()])
+    logger.info('Save blocks into \'%s\'', blocks_path)
+    np.save(blocks_path, np.array(blocks))
 
 
 def prepare_hdfs_2(args):

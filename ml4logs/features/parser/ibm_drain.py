@@ -34,7 +34,6 @@ def parse_ibm_drain(args):
     with logs_path.open() as logs_in_f:
         for i, line in enumerate(logs_in_f):
             match = pattern.fullmatch(line.strip())
-            assert match is not None
             content = match.group('content')
             result = template_miner.add_log_message(content)
             eventids_str.append(result['cluster_id'])

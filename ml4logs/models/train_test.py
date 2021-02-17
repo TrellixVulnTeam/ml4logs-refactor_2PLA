@@ -73,7 +73,7 @@ def train_test_models(args):
 
         logger.info('Fit train data to model')
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+            warnings.simplefilter('ignore')
             model.fit(npzfile_train['X'], npzfile_train['Y'])
 
         logger.info('Compute metrics on test data')

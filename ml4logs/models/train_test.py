@@ -19,6 +19,9 @@ from sklearn.metrics import (roc_auc_score,
                              average_precision_score,
                              precision_recall_fscore_support)
 
+# === Local ===
+import ml4logs
+
 
 # ===== GLOBALS =====
 logger = logging.getLogger(__name__)
@@ -59,7 +62,7 @@ def train_test_models(args):
     test_path = pathlib.Path(args['test_path'])
     stats_path = pathlib.Path(args['stats_path'])
 
-    stats_path.parent.mkdir(parents=True, exist_ok=True)
+    ml4logs.utils.mkdirs(files=[stats_path])
 
     logger.info('Load train dataset from \'%s\'', train_path)
     npzfile_train = np.load(train_path)

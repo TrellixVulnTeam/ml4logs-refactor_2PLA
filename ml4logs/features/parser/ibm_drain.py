@@ -23,8 +23,7 @@ def parse_ibm_drain(args):
     eventids_path = pathlib.Path(args['eventids_path'])
     templates_path = pathlib.Path(args['templates_path'])
 
-    eventids_path.parent.mkdir(parents=True, exist_ok=True)
-    templates_path.parent.mkdir(parents=True, exist_ok=True)
+    ml4logs.utils.mkdirs(files=[eventids_path, templates_path])
 
     pattern = re.compile(args['regex'])
     template_miner = drain3.TemplateMiner()

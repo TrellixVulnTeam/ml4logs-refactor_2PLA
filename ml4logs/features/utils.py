@@ -8,6 +8,9 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
+# === Local ===
+import ml4logs
+
 
 # ===== GLOBALS =====
 logger = logging.getLogger(__name__)
@@ -19,8 +22,7 @@ def split(args):
     train_path = pathlib.Path(args['train_path'])
     test_path = pathlib.Path(args['test_path'])
 
-    train_path.parent.mkdir(parents=True, exist_ok=True)
-    test_path.parent.mkdir(parents=True, exist_ok=True)
+    ml4logs.utils.mkdirs(files=[train_path, test_path])
 
     logger.info('Load dataset from \'%s\'', in_path)
     npzfile = np.load(in_path)
@@ -44,8 +46,7 @@ def scale(args):
     train_scaled_path = pathlib.Path(args['train_scaled_path'])
     test_scaled_path = pathlib.Path(args['test_scaled_path'])
 
-    train_scaled_path.parent.mkdir(parents=True, exist_ok=True)
-    test_scaled_path.parent.mkdir(parents=True, exist_ok=True)
+    ml4logs.utils.mkdirs(files=[train_scaled_path, test_scaled_path])
 
     scaler = StandardScaler()
     logger.info('Load train dataset from \'%s\'', train_path)
@@ -67,7 +68,7 @@ def onehot(args):
     in_path = pathlib.Path(args['in_path'])
     out_path = pathlib.Path(args['out_path'])
 
-    out_path.parent.mkdir(parents=True, exist_ok=True)
+    ml4logs.utils.mkdirs(files=[out_path])
 
     logger.info('Load index array')
     array = np.load(in_path)

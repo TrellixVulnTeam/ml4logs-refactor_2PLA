@@ -9,6 +9,9 @@ import functools as ftools
 import numpy as np
 import pandas as pd
 
+# === Local ===
+import ml4logs
+
 
 # ===== GLOBALS =====
 logger = logging.getLogger(__name__)

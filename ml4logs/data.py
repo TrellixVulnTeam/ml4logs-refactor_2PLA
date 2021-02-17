@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 def download(args):
     path = pathlib.Path(args['path'])
 
-    path.parent.mkdir(parents=True, exist_ok=True)
+    ml4logs.utils.mkdirs(files=[path])
 
     logger.info('Download \'%s\'', args['url'])
     response = requests.get(args['url'])
@@ -33,7 +33,7 @@ def extract(args):
     in_path = pathlib.Path(args['in_path'])
     out_dir = pathlib.Path(args['out_dir'])
 
-    out_dir.mkdir(parents=True, exist_ok=True)
+    ml4logs.utils.mkdirs(folders=[out_dir])
 
     logger.info('Open \'%s\' as tarfile', in_path)
     with tarfile.open(in_path, 'r:gz') as tar:
@@ -89,9 +89,7 @@ def split_labels(args, in_path, normal_label):
     logs_path = pathlib.Path(args['logs_path'])
     labels_path = pathlib.Path(args['labels_path'])
 
-    FOLDERS_TO_CREATE = [logs_path.parent, labels_path.parent]
-    for folder in FOLDERS_TO_CREATE:
-        folder.mkdir(parents=True, exist_ok=True)
+    ml4logs.utils.mkdirs(files=[logs_path, labels_path])
 
     n_lines = ml4logs.utils.count_file_lines(in_path)
     step = n_lines // 10
@@ -112,7 +110,7 @@ def head(args):
     logs_path = pathlib.Path(args['logs_path'])
     logs_head_path = pathlib.Path(args['logs_head_path'])
 
-    logs_head_path.parent.mkdir(parents=True, exist_ok=True)
+    ml4logs.utils.mkdirs(files=[logs_head_path])
 
     logger.info('Read first %d lines from \'%s\'', args['n_rows'], logs_path)
     with logs_path.open() as in_f:

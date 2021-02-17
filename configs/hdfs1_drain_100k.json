@@ -53,7 +53,7 @@
         },
         {
             "action": "split",
-            "in_path": "data/interim/HDFS1/ibm_drain-100k.npz",
+            "dataset_path": "data/interim/HDFS1/ibm_drain-100k.npz",
             "train_path": "data/interim/HDFS1/ibm_drain-100k-train.npz",
             "test_path": "data/interim/HDFS1/ibm_drain-100k-test.npz",
             "train_size": 0.2,

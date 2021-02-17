@@ -18,14 +18,14 @@ logger = logging.getLogger(__name__)
 
 # ===== FUNCTIONS =====
 def split(args):
-    in_path = pathlib.Path(args['in_path'])
+    dataset_path = pathlib.Path(args['dataset_path'])
     train_path = pathlib.Path(args['train_path'])
     test_path = pathlib.Path(args['test_path'])
 
     ml4logs.utils.mkdirs(files=[train_path, test_path])
 
-    logger.info('Load dataset from \'%s\'', in_path)
-    npzfile = np.load(in_path)
+    logger.info('Load dataset from \'%s\'', dataset_path)
+    npzfile = np.load(dataset_path)
     logger.info('Split with \'train size\' = %.2f and \'random seed\' = %d',
                 args['train_size'], args['seed'])
     x_train, x_test, y_train, y_test = train_test_split(

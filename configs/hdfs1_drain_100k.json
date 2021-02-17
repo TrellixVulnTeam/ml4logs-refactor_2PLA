@@ -41,32 +41,16 @@
             "features_path": "data/interim/HDFS1/ibm_drain-eventids-100k.npy",
             "blocks_path": "data/interim/HDFS1/blocks.npy",
             "labels_path": "data/interim/HDFS1/labels.npy",
-            "dataset_path": "data/interim/HDFS1/ibm_drain-100k.npz",
+            "dataset_path": "data/processed/HDFS1/ibm_drain-100k.npz",
             "method": "count_vector",
             "skip": false
         },
         {
-            "action": "split",
-            "dataset_path": "data/interim/HDFS1/ibm_drain-100k.npz",
-            "train_path": "data/interim/HDFS1/ibm_drain-100k-train.npz",
-            "test_path": "data/interim/HDFS1/ibm_drain-100k-test.npz",
+            "action": "train_test_models",
+            "dataset_path": "data/processed/HDFS1/ibm_drain-100k.npz",
+            "stats_path": "reports/results/HDFS1-ibm_drain-100k.json",
             "train_size": 0.2,
             "seed": 14235,
-            "skip": false
-        },
-        {
-            "action": "scale",
-            "train_path": "data/interim/HDFS1/ibm_drain-100k-train.npz",
-            "test_path": "data/interim/HDFS1/ibm_drain-100k-test.npz",
-            "train_scaled_path": "data/processed/HDFS1/ibm_drain-100k-train-scaled.npz",
-            "test_scaled_path": "data/processed/HDFS1/ibm_drain-100k-test-scaled.npz",
-            "skip": false
-        },
-        {
-            "action": "train_test_models",
-            "train_path": "data/processed/HDFS1/ibm_drain-100k-train-scaled.npz",
-            "test_path": "data/processed/HDFS1/ibm_drain-100k-test-scaled.npz",
-            "stats_path": "reports/results/HDFS1-ibm_drain-100k.json",
             "models": [
                 {
                     "name": "logistic_regression",

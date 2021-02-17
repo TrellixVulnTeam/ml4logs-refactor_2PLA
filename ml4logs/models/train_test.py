@@ -7,6 +7,8 @@ import json
 
 # === Thirdparty ===
 import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import LinearSVC
@@ -58,16 +60,28 @@ MODEL_CLASSES = {
 
 # ===== FUNCTIONS =====
 def train_test_models(args):
-    train_path = pathlib.Path(args['train_path'])
-    test_path = pathlib.Path(args['test_path'])
+    dataset_path = pathlib.Path(args['dataset_path'])
     stats_path = pathlib.Path(args['stats_path'])
 
     ml4logs.utils.mkdirs(files=[stats_path])
 
-    logger.info('Load train dataset from \'%s\'', train_path)
-    npzfile_train = np.load(train_path)
-    logger.info('Load test dataset from \'%s\'', test_path)
-    npzfile_test = np.load(test_path)
+    logger.info('Load dataset from \'%s\'', dataset_path)
+    dataset_npz = np.load(dataset_path)
+
+    logger.info('Split with \'train size\' = %.2f and \'random seed\' = %d',
+                args['train_size'], args['seed'])
+    x_train, x_test, y_train, y_test = train_test_split(
+        dataset_npz['X'], dataset_npz['Y'],
+        train_size=args['train_size'],
+        stratify=dataset_npz['Y'],
+        random_state=args['seed']
+    )
+
+    scaler = StandardScaler()
+    logger.info('Scale train dataset using sklearn StandardScaler')
+    x_train_scaled = scaler.fit_transform(x_train)
+    logger.info('Scale test dataset using fitted sklearn StandardScaler')
+    x_test_scaled = scaler.transform(x_test)
 
     stats = {'step': args, 'metrics': {}}
     for m_dict in args['models']:
@@ -77,15 +91,15 @@ def train_test_models(args):
         logger.info('Fit train data to model')
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
-            model.fit(npzfile_train['X'], npzfile_train['Y'])
+            model.fit(x_train_scaled, y_train)
 
         logger.info('Compute metrics on test data')
-        c_pred = model.predict(npzfile_test['X'])
-        y_pred = model.predict_proba(npzfile_test['X'])[:, 1]
-        auc = roc_auc_score(npzfile_test['Y'], y_pred)
-        ap = average_precision_score(npzfile_test['Y'], y_pred)
+        c_pred = model.predict(x_test_scaled)
+        y_pred = model.predict_proba(x_test_scaled)[:, 1]
+        auc = roc_auc_score(y_test, y_pred)
+        ap = average_precision_score(y_test, y_pred)
         precision, recall, f1, _ = precision_recall_fscore_support(
-            npzfile_test['Y'], c_pred, average='binary', zero_division=0
+            y_test, c_pred, average='binary', zero_division=0
         )
         logger.info('AUC = %.2f, AP = %.2f', auc, ap)
         logger.info('Precision = %.2f, Recall = %.2f, F1-score = %.2f',

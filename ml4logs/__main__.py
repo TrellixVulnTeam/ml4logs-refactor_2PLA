@@ -27,8 +27,6 @@ def main():
         'parse_ibm_drain': ml4logs.features.parser.parse_ibm_drain,
         'aggregate_by_blocks': ml4logs.features.aggregate.aggregate_by_blocks,
         'aggregate_by_lines': ml4logs.features.aggregate.aggregate_by_lines,
-        'split': ml4logs.features.utils.split,
-        'scale': ml4logs.features.utils.scale,
         'train_test_models': ml4logs.models.train_test.train_test_models
     }
 

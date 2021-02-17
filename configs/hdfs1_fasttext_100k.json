@@ -54,32 +54,16 @@
             "features_path": "data/interim/HDFS1/fasttext-100k.npy",
             "blocks_path": "data/interim/HDFS1/blocks.npy",
             "labels_path": "data/interim/HDFS1/labels.npy",
-            "dataset_path": "data/interim/HDFS1/fasttext-average-100k.npz",
+            "dataset_path": "data/processed/HDFS1/fasttext-average-100k.npz",
             "method": "average",
             "skip": false
         },
         {
-            "action": "split",
-            "dataset_path": "data/interim/HDFS1/fasttext-average-100k.npz",
-            "train_path": "data/interim/HDFS1/fasttext-average-100k-train.npz",
-            "test_path": "data/interim/HDFS1/fasttext-average-100k-test.npz",
+            "action": "train_test_models",
+            "dataset_path": "data/processed/HDFS1/fasttext-average-100k.npz",
+            "stats_path": "reports/results/HDFS1-skipgram-average-100k.json",
             "train_size": 0.2,
             "seed": 14235,
-            "skip": false
-        },
-        {
-            "action": "scale",
-            "train_path": "data/interim/HDFS1/fasttext-average-100k-train.npz",
-            "test_path": "data/interim/HDFS1/fasttext-average-100k-test.npz",
-            "train_scaled_path": "data/processed/HDFS1/fasttext-average-100k-train-scaled.npz",
-            "test_scaled_path": "data/processed/HDFS1/fasttext-average-100k-test-scaled.npz",
-            "skip": false
-        },
-        {
-            "action": "train_test_models",
-            "train_path": "data/processed/HDFS1/fasttext-average-100k-train-scaled.npz",
-            "test_path": "data/processed/HDFS1/fasttext-average-100k-test-scaled.npz",
-            "stats_path": "reports/results/HDFS1-skipgram-average-100k.json",
             "models": [
                 {
                     "name": "logistic_regression",

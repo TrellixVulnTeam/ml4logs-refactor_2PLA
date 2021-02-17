@@ -1,4 +1,4 @@
-.PHONY: requirements hdfs1_100k
+.PHONY: requirements hdfs1_fasttext_100k hdfs1_drain_100k bgl_100k thunderbird_100k
 
 
 PROJECT_NAME = ml4logs
@@ -12,6 +12,8 @@ BASH_INTERPRETER = bash
 requirements:
 	$(PYTHON_INTERPRETER) -m pip install -r "$(PROJECT_DIR)/requirements.txt"
 
+
+all: hdfs1_fasttext_100k hdfs1_drain_100k bgl_100k
 
 hdfs1_fasttext_100k:
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/hdfs1_fasttext_100k.batch"

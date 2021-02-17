@@ -67,8 +67,7 @@ def train_test_models(args):
 
     logger.info('Load dataset from \'%s\'', dataset_path)
     with np.load(dataset_path) as dataset_npz:
-        logger.info('Split with \'train size\' = %.2f and \'random seed\' = %d',
-                    args['train_size'], args['seed'])
+        logger.info('Split with \'train size\' = %.2f', args['train_size'])
         x_train, x_test, y_train, y_test = train_test_split(
             dataset_npz['X'], dataset_npz['Y'],
             train_size=args['train_size'],

@@ -17,7 +17,8 @@
             "dataset": "HDFS1",
             "in_dir": "data/raw/HDFS1",
             "logs_path": "data/interim/HDFS1/logs.txt",
-            "labels_path": "data/interim/HDFS1/labels.csv",
+            "blocks_path": "data/interim/HDFS1/blocks.npy",
+            "labels_path": "data/interim/HDFS1/labels.npy",
             "skip": false
         },
         {
@@ -49,12 +50,11 @@
             "skip": false
         },
         {
-            "action": "aggregate",
-            "dataset": "HDFS1",
-            "logs_path": "data/interim/HDFS1/logs-100k.txt",
-            "labels_path": "data/interim/HDFS1/labels.csv",
-            "embeddings_path": "data/interim/HDFS1/fasttext-100k.npy",
-            "out_path": "data/interim/HDFS1/fasttext-average-100k.npz",
+            "action": "aggregate_by_blocks",
+            "features_path": "data/interim/HDFS1/fasttext-100k.npy",
+            "blocks_path": "data/interim/HDFS1/blocks.npy",
+            "labels_path": "data/interim/HDFS1/labels.npy",
+            "dataset_path": "data/interim/HDFS1/fasttext-average-100k.npz",
             "method": "average",
             "skip": false
         },

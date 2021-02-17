@@ -49,11 +49,10 @@
             "skip": false
         },
         {
-            "action": "aggregate",
-            "dataset": "BGL",
+            "action": "aggregate_by_lines",
+            "features_path": "data/interim/BGL/fasttext-100k.npy",
             "labels_path": "data/interim/BGL/labels.npy",
-            "embeddings_path": "data/interim/BGL/fasttext-100k.npy",
-            "out_path": "data/interim/BGL/fasttext-100k.npz",
+            "dataset_path": "data/interim/BGL/fasttext-100k.npz",
             "skip": false
         },
         {

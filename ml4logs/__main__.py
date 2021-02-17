@@ -29,7 +29,6 @@ def main():
         'aggregate': ml4logs.features.aggregate.aggregate,
         'split': ml4logs.features.utils.split,
         'scale': ml4logs.features.utils.scale,
-        'train_test_model': ml4logs.models.train_test.train_test_model,
         'train_test_models': ml4logs.models.train_test.train_test_models
     }
 

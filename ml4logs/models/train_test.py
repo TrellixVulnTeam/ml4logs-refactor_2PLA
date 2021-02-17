@@ -66,16 +66,15 @@ def train_test_models(args):
     ml4logs.utils.mkdirs(files=[stats_path])
 
     logger.info('Load dataset from \'%s\'', dataset_path)
-    dataset_npz = np.load(dataset_path)
-
-    logger.info('Split with \'train size\' = %.2f and \'random seed\' = %d',
-                args['train_size'], args['seed'])
-    x_train, x_test, y_train, y_test = train_test_split(
-        dataset_npz['X'], dataset_npz['Y'],
-        train_size=args['train_size'],
-        stratify=dataset_npz['Y'],
-        random_state=args['seed']
-    )
+    with np.load(dataset_path) as dataset_npz:
+        logger.info('Split with \'train size\' = %.2f and \'random seed\' = %d',
+                    args['train_size'], args['seed'])
+        x_train, x_test, y_train, y_test = train_test_split(
+            dataset_npz['X'], dataset_npz['Y'],
+            train_size=args['train_size'],
+            stratify=dataset_npz['Y'],
+            random_state=args['seed']
+        )
 
     scaler = StandardScaler()
     logger.info('Scale train dataset using sklearn StandardScaler')

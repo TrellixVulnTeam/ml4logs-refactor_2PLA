@@ -25,3 +25,10 @@ def count_file_lines(path):
         for i, _ in enumerate(in_f):
             pass
     return i + 1
+
+
+def mkdirs(files=[], folders=[]):
+    for file_ in files:
+        file_.parent.mkdir(parents=True, exist_ok=True)
+    for folder in folders:
+        folder.mkdir(parents=True, exist_ok=True)

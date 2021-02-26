@@ -1,5 +1,6 @@
 # ===== IMPORTS =====
 # === Standard library ===
+import datetime
 import logging
 import pathlib
 import re
@@ -33,6 +34,7 @@ def prepare_hdfs_1(args):
     logs_path = pathlib.Path(args['logs_path'])
     blocks_path = pathlib.Path(args['blocks_path'])
     labels_path = pathlib.Path(args['labels_path'])
+    timedeltas_path = pathlib.Path(args['timedeltas_path'])
 
     ml4logs.utils.mkdirs(files=[logs_path, labels_path, blocks_path])
 
@@ -51,13 +53,40 @@ def prepare_hdfs_1(args):
     blk_mapping = dict(zip(labels_df['BlockId'], labels_df.index))
     pattern = re.compile(r'(blk_-?\d+)')
     blocks = []
-    logger.info('Extract blocks from log lines')
+    timestamps = []
+    logger.info('Extract blocks and timestamps from log lines')
     with logs_path.open() as logs_in_f:
         for line in logs_in_f:
             match = pattern.search(line.strip())
             blocks.append(blk_mapping[match.group()])
+            dt_str = line[:13]
+            dt = datetime.datetime.strptime(dt_str, r'%y%m%d %H%M%S')
+            timestamps.append(dt.timestamp())
+    blocks = np.array(blocks)
+    timestamps = np.array(timestamps)
+
     logger.info('Save blocks into \'%s\'', blocks_path)
-    np.save(blocks_path, np.array(blocks))
+    np.save(blocks_path, blocks)
+
+    logger.info('Compute timedeltas')
+    indexes = {}
+    values = {}
+    for idx, (block, array) in enumerate(zip(blocks, timestamps)):
+        list_values = values.setdefault(block, list())
+        list_values.append(array)
+        list_idx = indexes.setdefault(block, list())
+        list_idx.append(idx)
+    values = {block: np.stack(arrays) for block, arrays in values.items()}
+    indexes = {block: np.stack(arrays) for block, arrays in indexes.items()}
+    timedeltas = np.zeros_like(timestamps)
+    for block in np.unique(blocks):
+        tds = np.zeros_like(values[block])
+        tds[1:] = values[block][1:] - values[block][:-1]
+        timedeltas[indexes[block]] = tds
+    timedeltas = np.expand_dims(timedeltas, axis=timedeltas.ndim)
+
+    logger.info('Save timedeltas into \'%s\'', timedeltas_path)
+    np.save(timedeltas_path, timedeltas)
 
 
 def prepare_hdfs_2(args):

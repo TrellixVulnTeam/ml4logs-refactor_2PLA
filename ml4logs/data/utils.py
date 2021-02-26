@@ -7,6 +7,7 @@ import itertools as itools
 
 # === Thirdparty ===
 import requests
+import numpy as np
 
 # === Local ===
 import ml4logs
@@ -53,3 +54,18 @@ def head(args):
             lambda l: l.strip(), itools.islice(in_f, args['n_rows'])))
     logger.info('Save them into \'%s\'', logs_head_path)
     logs_head_path.write_text('\n'.join(logs_head))
+
+
+def merge_features(args):
+    merged_path = pathlib.Path(args['merged_path'])
+
+    logger.info('Load all input arrays')
+    arrays = []
+    for path_str in args['features_paths']:
+        array = np.load(pathlib.Path(path_str))
+        arrays.append(array)
+    logger.info('Concatenate input arrays')
+    merged_array = np.concatenate(arrays, axis=1)
+
+    logger.info('Save merged array into \'%s\'', merged_path)
+    np.save(merged_path, merged_array)

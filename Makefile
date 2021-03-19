@@ -13,13 +13,13 @@ requirements:
 	$(PYTHON_INTERPRETER) -m pip install -r "$(PROJECT_DIR)/requirements.txt"
 
 
-all: hdfs1_fasttext_seq2seq_100k hdfs1_fasttext_100k hdfs1_drain_100k bgl_100k
+all: hdfs1_fasttext_seq2seq_100k hdfs1_fasttext_loglizer_100k hdfs1_drain_100k bgl_100k
 
 hdfs1_fasttext_seq2seq_100k:
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/hdfs1_fasttext_seq2seq_100k.batch"
 
-hdfs1_fasttext_100k:
-	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/hdfs1_fasttext_100k.batch"
+hdfs1_fasttext_loglizer_100k:
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/hdfs1_fasttext_loglizer_100k.batch"
 
 hdfs1_drain_100k:
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/hdfs1_drain_100k.batch"

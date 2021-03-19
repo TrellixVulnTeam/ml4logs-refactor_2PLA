@@ -1,6 +1,3 @@
-# local package
--e .
-
 # external requirements
 requests
 numpy
@@ -9,3 +6,7 @@ fasttext
 drain3
 sklearn
 pyod
+torch
+
+# local package
+-e .

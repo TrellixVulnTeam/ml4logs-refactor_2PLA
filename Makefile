@@ -15,14 +15,21 @@ requirements:
 
 all: hdfs1_fasttext_seq2seq_100k hdfs1_fasttext_loglizer_100k hdfs1_drain_100k bgl_100k
 
-hdfs1_fasttext_seq2seq_100k:
-	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/hdfs1_fasttext_seq2seq_100k.batch"
 
-hdfs1_fasttext_loglizer_100k:
-	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/hdfs1_fasttext_loglizer_100k.batch"
+hdfs1_data_100k:
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1/data_100k.batch"
 
-hdfs1_drain_100k:
-	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/hdfs1_drain_100k.batch"
+hdfs1_data_all:
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1/data.batch"
+
+hdfs1_preprocess:
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1/drain_preprocess.batch"
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1/fasttext_preprocess.batch"
+
+hdfs1_train_test:
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1/drain_loglizer.batch"
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1/fasttext_loglizer.batch"
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1/fasttext_seq2seq.batch"
 
 bgl_100k:
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/bgl_100k.batch"

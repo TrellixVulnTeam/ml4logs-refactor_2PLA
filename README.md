@@ -5,9 +5,10 @@
 3. Change `BASH_INTERPRETER` variable in `Makefile` (if needed)
 4. Run `make {COMMAND_NAME}`
 
-## Command names (100k lines versions)
+## Run benchmark on HDFS1
 
-- `hdfs1_fasttext_seq2seq_100k`
-- `hdfs1_fasttext_loglizer_100k`
-- `hdfs1_drain_100k`
-- `bgl_100k`
+- `make hdfs1_data_all` (or `make hdfs1_data_100k`)
+- wait
+- `make hdfs1_preprocess`
+- wait
+- `make hdfs1_train_test`

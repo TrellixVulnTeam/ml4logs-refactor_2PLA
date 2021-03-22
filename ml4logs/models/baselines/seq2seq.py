@@ -165,7 +165,8 @@ class Seq2SeqModelTrainer:
 
 # ===== FUNCTIONS =====
 def train_test_seq2seq(args):
-    generator = np.random.RandomState(seed=args['seed'])
+    np.random.seed(args['seed'])
+    torch.manual_seed(args['seed'])
 
     features_path = pathlib.Path(args['features_path'])
     blocks_path = pathlib.Path(args['blocks_path'])
@@ -191,15 +192,13 @@ def train_test_seq2seq(args):
     logger.info('Split with train size = %.2f', args['train_size'])
     train_blocks, test_normal_blocks = train_test_split(
         normal_blocks,
-        train_size=args['train_size'],
-        random_state=generator
+        train_size=args['train_size']
     )
     logger.info('Split with validation size = %.2f', args['validation_size'])
     test_blocks = np.concatenate((test_normal_blocks, test_abnormal_blocks))
     train_blocks, validation_blocks = train_test_split(
         train_blocks,
-        test_size=args['validation_size'],
-        random_state=generator
+        test_size=args['validation_size']
     )
     logger.info('Train normal blocks %s', train_blocks.shape)
     logger.info('Validation normal blocks %s', validation_blocks.shape)

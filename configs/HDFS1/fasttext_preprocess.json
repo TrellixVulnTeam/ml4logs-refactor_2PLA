@@ -3,7 +3,7 @@
         {
             "action": "train_fasttext",
             "logs_path": "data/interim/HDFS1/logs.txt",
-            "model_path": "models/embeddings/fasttext_skipgram-hdfs1.bin",
+            "model_path": "models/embeddings/HDFS1/fasttext_skipgram.bin",
             "model_args": {
                 "dim": 100,
                 "minCount": 10000,
@@ -16,7 +16,7 @@
         {
             "action": "preprocess_fasttext",
             "logs_path": "data/interim/HDFS1/logs.txt",
-            "model_path": "models/embeddings/fasttext_skipgram-hdfs1.bin",
+            "model_path": "models/embeddings/HDFS1/fasttext_skipgram.bin",
             "embeddings_path": "data/interim/HDFS1/fasttext.npy"
         },
         {

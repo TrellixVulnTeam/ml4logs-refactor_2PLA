@@ -1,6 +1,3 @@
-.PHONY: requirements hdfs1_fasttext_100k hdfs1_drain_100k bgl_100k thunderbird_100k
-
-
 PROJECT_NAME = ml4logs
 export PROJECT_DIR = $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 export PYTHON_INTERPRETER = python
@@ -9,17 +6,28 @@ export PYTHON_INTERPRETER = python
 BASH_INTERPRETER = bash
 
 
+.PHONY: requirements \
+		hdfs1_100k_data hdfs1_100k_preprocess hdfs1_100k_train_test \
+		hdfs1_data hdfs1_preprocess hdfs1_train_test \
+		bgl_100k thunderbird_100k
+
+
 requirements:
 	$(PYTHON_INTERPRETER) -m pip install -r "$(PROJECT_DIR)/requirements.txt"
 
+hdfs1_100k_data:
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1_100k/data.batch"
 
-all: hdfs1_fasttext_seq2seq_100k hdfs1_fasttext_loglizer_100k hdfs1_drain_100k bgl_100k
+hdfs1_100k_preprocess:
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1_100k/drain_preprocess.batch"
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1_100k/fasttext_preprocess.batch"
 
+hdfs1_100k_train_test:
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1_100k/drain_loglizer.batch"
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1_100k/fasttext_loglizer.batch"
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1_100k/fasttext_seq2seq.batch"
 
-hdfs1_data_100k:
-	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1/data_100k.batch"
-
-hdfs1_data_all:
+hdfs1_data:
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1/data.batch"
 
 hdfs1_preprocess:

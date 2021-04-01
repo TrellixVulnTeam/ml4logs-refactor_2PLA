@@ -73,3 +73,36 @@ fasttext_seq2seq
 - Try to predict next embedding using LSTM based torch model
 - Compute threshold on train dataset (assume 5% logs are anomalies)
 - Test on different thresholds and save statistics
+
+## Description of data files
+
+### Dataset labeled by block (e.g. HDFS)
+
+```
+N - Number of log lines
+B - Number of blocks (e.g. blk_ in HDFS)
+E - Number of event ids (e.g. extracted by drain)
+F - Embedding dimension (e.g. fasttext)
+```
+
+```
+data
+├── interim
+│   └── {DATASET_NAME}
+│       ├── blocks.npy                  (N, )       Block ids
+│       ├── fasttext-timedeltas.npy     (N, F + 1)  Fasttext embeddings with timedeltas
+│       ├── fasttext.npy                (N, F)      Fasttext embeddings
+│       ├── ibm_drain-eventids.npy      (N, )       Event ids
+│       ├── ibm_drain-templates.csv     (E, )       Event ids, their templates and occurrences
+│       ├── labels.npy                  (B, )       Labels (1 stands for anomaly, 0 for normal)
+│       ├── logs.txt                                Raw logs
+│       └── timedeltas.npy              (N, )       Timedeltas
+├── processed
+│   └── {DATASET_NAME}
+│       ├── fasttext-average.npz        (B, F + 1)  Fasttext embeddings with timedeltas aggregated by blocks
+│       └── ibm_drain.npz               (B, E)      Count vectors
+└── raw
+    └── {DATASET_NAME}
+        ├── {ARCHIVE}.tar.gz
+        └── Dataset specific files
+```

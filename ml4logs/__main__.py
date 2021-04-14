@@ -29,7 +29,8 @@ def main():
         'aggregate_by_blocks': ml4logs.features.aggregate.aggregate_by_blocks,
         'aggregate_by_lines': ml4logs.features.aggregate.aggregate_by_lines,
         'train_test_models': ml4logs.models.train_test.train_test_models,
-        'train_test_seq2seq': ml4logs.models.baselines.train_test_seq2seq
+        'train_test_seq2seq': ml4logs.models.baselines.train_test_seq2seq,
+        'train_test_seq2label': ml4logs.models.baselines.train_test_seq2label
     }
 
     parser = argparse.ArgumentParser()

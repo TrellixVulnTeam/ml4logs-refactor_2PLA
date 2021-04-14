@@ -26,6 +26,7 @@ hdfs1_100k_train_test:
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1_100k/drain_loglizer.batch"
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1_100k/fasttext_loglizer.batch"
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1_100k/fasttext_seq2seq.batch"
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1_100k/fasttext_seq2label.batch"
 
 hdfs1_data:
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1/data.batch"
@@ -38,6 +39,7 @@ hdfs1_train_test:
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1/drain_loglizer.batch"
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1/fasttext_loglizer.batch"
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1/fasttext_seq2seq.batch"
+	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/HDFS1_100k/fasttext_seq2label.batch"
 
 bgl_100k:
 	$(BASH_INTERPRETER) "$(PROJECT_DIR)/scripts/bgl_100k.batch"

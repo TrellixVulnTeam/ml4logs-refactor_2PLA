@@ -25,61 +25,25 @@ ABNORMAL_LABEL = 1
 
 
 # ===== CLASSES =====
-class SequenceDataset(tdata.Dataset):
-    def __init__(self, inputs, outputs, labels):
-        self._inputs = inputs
-        self._outputs = outputs
-        self._labels = labels
-
-    def __getitem__(self, idx):
-        return self._inputs[idx], self._outputs[idx], self._labels[idx]
-
-    def __len__(self):
-        return len(self._inputs)
-
-
-class Seq2SeqModel(torch.nn.Module):
-    def __init__(self, f_dim, n_lstm_layers=1,
-                 n_hidden_linears=2, linear_width=300, linear_norm=False):
-        super().__init__()
-        self._lstm = torch.nn.LSTM(f_dim, f_dim, batch_first=True,
-                                   num_layers=n_lstm_layers)
-        linears = [torch.nn.Linear(f_dim, linear_width)]
-        if linear_norm:
-            linears.append(torch.nn.LayerNorm(linear_width))
-        linears.append(torch.nn.LeakyReLU())
-        for _ in range(n_hidden_linears):
-            linears.append(torch.nn.Linear(linear_width, linear_width))
-            if linear_norm:
-                linears.append(torch.nn.LayerNorm(linear_width))
-            linears.append(torch.nn.LeakyReLU())
-        linears.append(torch.nn.Linear(linear_width, f_dim))
-        self._linears = torch.nn.Sequential(*linears)
-
-    def forward(self, X):
-        out, _ = self._lstm(X)
-        out, lengths = tutilsrnn.pad_packed_sequence(X, batch_first=True)
-        return self._linears(out)
-
-
-class Seq2SeqModelTrainer:
+class Seq2LabelModelTrainer:
     def __init__(self, device, f_dim, model_kwargs,
                  optim_kwargs, lr_scheduler_kwargs):
-        self._model = Seq2SeqModel(f_dim, **model_kwargs).to(device)
-        self._criterion = torch.nn.MSELoss()
+        self._model = ml4logs.models.baselines.SeqModel(
+            f_dim, **model_kwargs
+        ).to(device)
+        self._criterion = torch.nn.BCEWithLogitsLoss()
         self._optimizer = torch.optim.Adam(
             self._model.parameters(), **optim_kwargs)
         self._scheduler = torch.optim.lr_scheduler.ExponentialLR(
             self._optimizer, **lr_scheduler_kwargs)
         self._device = device
-        self._threshold = 0.0
 
     def train(self, dataloader):
         self._model.train()
         train_loss = 0.0
-        for inputs, outputs, _ in dataloader:
-            results, outputs = self._forward(inputs, outputs)
-            loss = self._criterion(results, outputs)
+        for inputs, labels in dataloader:
+            results, labels = self._forward(inputs, labels)
+            loss = self._criterion(results, labels)
             train_loss += loss.item()
             self._optimizer.zero_grad()
             loss.backward()
@@ -91,39 +55,33 @@ class Seq2SeqModelTrainer:
         self._model.eval()
         total_loss = 0.0
         with torch.no_grad():
-            for inputs, outputs, _ in dataloader:
-                results, outputs = self._forward(inputs, outputs)
-                loss = self._criterion(results, outputs)
+            for inputs, labels in dataloader:
+                results, labels = self._forward(inputs, labels)
+                loss = self._criterion(results, labels)
                 total_loss += loss.item()
         return total_loss / len(dataloader)
 
-    def compute_threshold(self, dataloader):
-        self._model.eval()
-        errors = []
-        for inputs, outputs, _ in dataloader:
-            results, outputs = self._forward(inputs, outputs)
-            loss = tfunctional.mse_loss(results, outputs, reduction='none')
-            loss = torch.mean(loss, dim=2)
-            loss = torch.mean(loss, dim=1)
-            errors.extend(loss.tolist())
-        self._threshold = np.mean(errors) + 2 * np.std(errors)
-        return self._threshold
-
-    def test(self, dataloader, threshold=None):
-        if threshold is None:
-            threshold = self._threshold
+    def test(self, dataloader, threshold):
         self._model.eval()
         labels = []
         result_labels = []
         with torch.no_grad():
-            for inputs, outputs, labels_ in dataloader:
-                results, outputs = self._forward(inputs, outputs)
-                loss = tfunctional.mse_loss(results, outputs, reduction='none')
-                loss = torch.mean(loss, dim=2)
-                loss = torch.mean(loss, dim=1)
+            for inputs, labels_ in dataloader:
+                results, labels_ = self._forward(inputs, labels_)
+                results = torch.sigmoid(results)
                 result_labels_ = torch.where(
-                    loss > threshold, ABNORMAL_LABEL, NORMAL_LABEL)
-                labels.append(labels_.numpy())
+                    results > threshold, ABNORMAL_LABEL, NORMAL_LABEL)
+                result_labels_ = torch.where(
+                    torch.sum(result_labels_, dim=1) > 0,
+                    ABNORMAL_LABEL,
+                    NORMAL_LABEL
+                )
+                labels_ = torch.where(
+                    torch.sum(labels_, dim=1) > 0,
+                    ABNORMAL_LABEL,
+                    NORMAL_LABEL
+                )
+                labels.append(labels_.to(device='cpu').numpy())
                 result_labels.append(result_labels_.to(device='cpu').numpy())
         labels = np.concatenate(labels)
         results = np.concatenate(result_labels)
@@ -136,9 +94,6 @@ class Seq2SeqModelTrainer:
             'recall': recall,
             'f1': f1
         }
-
-    def threshold(self):
-        return self._threshold
 
     def _forward(self, inputs, outputs):
         inputs = inputs.to(self._device)
@@ -160,11 +115,11 @@ class Seq2SeqModelTrainer:
             batch_first=True
         )
 
-        return results, outputs
+        return torch.squeeze(results), outputs
 
 
 # ===== FUNCTIONS =====
-def train_test_seq2seq(args):
+def train_test_seq2label(args):
     np.random.seed(args['seed'])
     torch.manual_seed(args['seed'])
 
@@ -236,7 +191,7 @@ def train_test_seq2seq(args):
     logger.info('Create model, optimizer, lr_scheduler and trainer')
     device = torch.device(args['device'])
     f_dim = features.shape[-1]
-    trainer = Seq2SeqModelTrainer(
+    trainer = Seq2LabelModelTrainer(
         device,
         f_dim,
         args['model_kwargs'],
@@ -257,7 +212,6 @@ def train_test_seq2seq(args):
     for epoch in range(1, args['epochs'] + 1):
         train_loss = trainer.train(train_l)
         validation_loss = trainer.evaluate(validation_l)
-        trainer.compute_threshold(train_l)
         stats['metrics']['train'].append(
             {'epoch': epoch,
              'train_loss': train_loss,
@@ -267,7 +221,7 @@ def train_test_seq2seq(args):
                     epoch, train_loss, validation_loss)
 
     logger.info('Start testing using different thresholds')
-    thresholds = np.linspace(0, 1.5 * trainer.threshold(), num=10)
+    thresholds = np.linspace(0, 1.0, num=10)
     for threshold in thresholds:
         info = trainer.test(test_l, threshold)
         stats['metrics']['test'].append(info)
@@ -284,20 +238,21 @@ def train_test_seq2seq(args):
 
 def create_sequence_dataset(values, labels_, blocks):
     inputs = []
-    outputs = []
     labels = []
     for block in blocks:
-        inputs.append(values[block][:-1])
-        outputs.append(values[block][1:])
-        labels.append(labels_[block])
-    return SequenceDataset(inputs, outputs, labels)
+        inputs.append(values[block])
+        labels.append(
+            torch.ones(len(values[block]))
+            if labels_[block]
+            else torch.zeros(len(values[block]))
+        )
+    return ml4logs.models.baselines.SequenceDataset(inputs, labels)
 
 
 def pad_collate(samples):
-    inputs, outputs, labels = tuple(zip(*samples))
+    inputs, labels = tuple(zip(*samples))
     inputs = tuple(map(torch.from_numpy, inputs))
-    outputs = tuple(map(torch.from_numpy, outputs))
-    labels = torch.tensor(labels)
+    # labels = tuple(map(torch.from_numpy, labels))
     inputs = tutilsrnn.pack_sequence(inputs, enforce_sorted=False)
-    outputs = tutilsrnn.pack_sequence(outputs, enforce_sorted=False)
-    return inputs, outputs, labels
+    labels = tutilsrnn.pack_sequence(labels, enforce_sorted=False)
+    return inputs, labels
